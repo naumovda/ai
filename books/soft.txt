@@ -1,0 +1,20 @@
+
+ѕротокол установки программных библиотек
+python -m pip install --upgrade pip
+
+рiр« install numpy
+рiр« install matplotlib
+рiр« install pandas
+рiр« install scikit-learn
+рiр« install scipy
+рiр« i nstall jupyter
+рiр« install theano
+рiр« install keras
+рiр« install nltk
+рiр« install seaborn
+рiр« install flask
+рiр« install pyprind
+рiр« install wtforms
+рiр« install mlxtend
+рiр« install pyqtS
+рiр« install spyder
