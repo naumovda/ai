@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="C:\lazarus\fpc\3.0.0\bin\x86_64-win64\fpc.exe" Date="1213098656"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -l -vewnhibq -FiE:\git\ai\code\lib\x86_64-win64 -FuE:\git\ai\code\ -FUE:\git\ai\code\lib\x86_64-win64\ tictactoe.lpr"/>
-</CONFIG>
