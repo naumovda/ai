@@ -39,6 +39,15 @@ type
 
   TGameSituationList = array of TGameSituation;
 
+  //описание хода в игре
+  TGameMove = record
+    IsNone: boolean;  //признак "пустого" хода
+    Index: 1..9;      //куда будет поставлен значок
+    Turn: boolean;    // чей ход: true - крестик
+  end;
+
+  TGameMoveList = array of TGameMove;
+
   TTreeNode = record
     GS: TGameSituation;
     ParentId: integer;
@@ -232,6 +241,116 @@ begin
       gen_node(tree, i);
 end;
 
+procedure do_move(const gm: TGameMove; var gs: TGameSituation);
+begin
+  if gm.Turn then //ход крестика
+    gs.Field[gm.Index] := X_SIGN
+  else
+    gs.Field[gm.Index] := O_SIGN;
+
+  gs.Turn := not gs.Turn; //передаем ход противнику
+end;
+
+procedure undo_move(const gm: TGameMove; var gs: TGameSituation);
+begin
+  gs.Field[gm.Index] := E_SIGN;
+
+  gs.Turn := not gs.Turn; //отменяем ход
+end;
+
+function get_moves_list(const gs: TGameSituation):TGameMoveList;
+var
+  i, count: integer;
+
+  gm: TGameMoveList;
+begin
+  count := 0;
+
+  SetLength(gm, 9);
+
+  for i := 1 to 9 do
+    if gs.Field[i] = #32 then
+    begin
+      gm[count].IsNone := false;
+      gm[count].Turn := gs.Turn;
+      gm[count].Index := i;
+
+      count := count + 1;
+    end;
+
+  if count = 0 then
+    gm := NULL
+  else
+    SetLength(gm, count);
+
+  Result := gm;
+end;
+
+//расчет лучшего хода по алгоритму MINIMAX
+procedure minimax(gs: TGameSituation; player: boolean; deep: integer;
+  var gm: TGameMove; var score: integer);
+var
+  gml: TGameMoveList;
+  i: integer;
+
+  move, best_move: TGameMove;
+  best_score: integer;
+
+begin
+  best_move.IsNone := true;
+  best_score := 0;
+
+  gml := nil;
+
+  //генерируем ходы игрока
+  if deep <> 0 then
+    gml := get_moves_list(gs);
+
+  //если достигли максимальной глубины просмотра
+  //или нет допустимых ходов
+  if (deep = 0) or (gml = nil) then
+  begin
+    gm.IsNone := true;
+    score := nc(gs, gs.Turn);
+    exit;
+  end;
+
+  for i := 0 to Length(gml)-1 do
+  begin
+    gm := gml[i];
+
+    //выполняем ход
+    do_move(gm, gs);
+
+    //выполняем расчет минимакса для сделанного хода
+    minimax(gs, not player, deep-1, move, score);
+
+    //отменяем ход
+    undo_move(gm, gs);
+
+    if (best_move.IsNone) or                               //первый найденый ход
+       ((gs.Turn = player) and (score > best_score)) or   //уровень MAX-игрока
+       ((gs.Turn = not player) and (score < best_score))  //уровень MIN-игрока
+      then
+    begin
+        best_score := score;
+        best_move := gm;
+    end;
+  end;
+
+  gm := best_move;
+  score := best_score;
+end;
+
+//получение лучшего хода
+procedure best_move(const gs: TGameSituation; var gm: TGameMove;
+  var score: integer);
+const
+  MINIMAX_DEEP = 4;
+begin
+  minimax(gs, gs.Turn, MINIMAX_DEEP, gm, score);
+end;
+
 var
   gs:TGameSituation;
   gsl, gsl2:TGameSituationList;
@@ -241,12 +360,16 @@ var
 
   i, level: integer;
 
-begin
-  Assign(F, FileName);
-  Rewrite(F);
+  gm: TGameMove;
+  score: integer;
 
-  gs.Turn := true; //первый ходит крестик
-  ClearField(gs);  //на пустое поле
+begin
+  //Assign(F, FileName);
+  //Rewrite(F);
+
+  //gs.Turn := true; //первый ходит крестик
+  //ClearField(gs);  //на пустое поле
+
   //gs.Field := 'XX 00    ';
 
   //writeln(F, 'Started situation:');
@@ -285,12 +408,12 @@ begin
 
   //TTree = array of TTreeNode;
 
-  root.GS := gs;
-  root.ParentId := -1;
-  root.IsGenMove := false;
+  //root.GS := gs;
+  //root.ParentId := -1;
+  //root.IsGenMove := false;
 
-  SetLength(tree, 1);
-  tree[0] := root;
+  //SetLength(tree, 1);
+  //tree[0] := root;
 
   //writeln(F, 'Tree:');
   //write_tree(tree);
@@ -300,15 +423,23 @@ begin
   //gen_node(tree, 0);
   //write_tree(tree);
 
-  for i := 1 to 9 do
-    gen_all(tree);
+  //for i := 1 to 9 do
+  //  gen_all(tree);
 
-  writeln(F, 'Tree with all levels:');
-  write_tree(tree);
+  //writeln(F, 'Tree with all levels:');
+  //write_tree(tree);
 
-  Close(F);
+  //Close(F);
 
-  writeln('Result is in file ', FileName);
+  //writeln('Result is in file ', FileName);
+
+  gs.Turn := true; //первый ходит крестик
+  ClearField(gs);   //на пустое поле
+
+  best_move(gs, gm, score);
+  writeln('move X to ', gm.Index);
+  writeln('score is ', score);
+
   writeln('Press Enter to quit...');
   readln;
 end.
