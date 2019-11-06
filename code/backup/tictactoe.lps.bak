@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="2">
+      <Unit0>
+        <Filename Value="tictactoe.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="37"/>
+        <CursorPos X="24" Y="47"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="tictac.txt"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="3299653"/>
+        <CursorPos X="8" Y="3299671"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit1>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125664" Column="10" TopLine="125644"/>
+      </Position1>
+      <Position2>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125688" Column="10" TopLine="125668"/>
+      </Position2>
+      <Position3>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125742" Column="10" TopLine="125722"/>
+      </Position3>
+      <Position4>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125766" Column="10" TopLine="125746"/>
+      </Position4>
+      <Position5>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125784" Column="10" TopLine="125764"/>
+      </Position5>
+      <Position6>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125808" Column="10" TopLine="125788"/>
+      </Position6>
+      <Position7>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125838" Column="10" TopLine="125818"/>
+      </Position7>
+      <Position8>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="125862" Column="10" TopLine="125842"/>
+      </Position8>
+      <Position9>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126216" Column="10" TopLine="126196"/>
+      </Position9>
+      <Position10>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126240" Column="10" TopLine="126220"/>
+      </Position10>
+      <Position11>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126264" Column="10" TopLine="126244"/>
+      </Position11>
+      <Position12>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126312" Column="10" TopLine="126292"/>
+      </Position12>
+      <Position13>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126336" Column="10" TopLine="126316"/>
+      </Position13>
+      <Position14>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126360" Column="10" TopLine="126340"/>
+      </Position14>
+      <Position15>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126816" Column="10" TopLine="126796"/>
+      </Position15>
+      <Position16>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126840" Column="10" TopLine="126820"/>
+      </Position16>
+      <Position17>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126864" Column="10" TopLine="126844"/>
+      </Position17>
+      <Position18>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126912" Column="10" TopLine="126892"/>
+      </Position18>
+      <Position19>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126936" Column="10" TopLine="126916"/>
+      </Position19>
+      <Position20>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="126960" Column="10" TopLine="126940"/>
+      </Position20>
+      <Position21>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128784" Column="10" TopLine="128764"/>
+      </Position21>
+      <Position22>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128808" Column="10" TopLine="128788"/>
+      </Position22>
+      <Position23>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128862" Column="10" TopLine="128842"/>
+      </Position23>
+      <Position24>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128886" Column="10" TopLine="128866"/>
+      </Position24>
+      <Position25>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128904" Column="10" TopLine="128884"/>
+      </Position25>
+      <Position26>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128928" Column="10" TopLine="128908"/>
+      </Position26>
+      <Position27>
+        <Filename Value="tictac.txt"/>
+        <Caret Line="128958" Column="10" TopLine="129025"/>
+      </Position27>
+      <Position28>
+        <Filename Value="tictactoe.lpr"/>
+        <Caret Line="248" Column="96" TopLine="292"/>
+      </Position28>
+      <Position29>
+        <Filename Value="tictactoe.lpr"/>
+        <Caret Line="36" Column="6" TopLine="25"/>
+      </Position29>
+      <Position30>
+        <Filename Value="tictactoe.lpr"/>
+        <Caret Line="310" Column="12" TopLine="293"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>

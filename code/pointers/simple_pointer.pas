@@ -1,5 +1,10 @@
 program simple_pointer;
 
+{$mode objfpc}
+
+uses
+  SysUtils;
+
 var
   i: integer;
   p, q: ^integer;
@@ -65,6 +70,7 @@ begin
 
   //изменим значение переменной i (той ячейки, на которую ссылается q)
   i := 13;
+  readln;
 
   //выполним присваивание адреса
   q := p;
@@ -85,8 +91,8 @@ begin
   // что будет, если попробовать еще раз освободить память?
   //try
     dispose(q);
-  // except
-  //  writeln('can not free memory twice!')
+  //except
+    writeln('can not free memory twice!')
   //end;
 end.
 

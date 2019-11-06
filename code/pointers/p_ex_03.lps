@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="p_ex_03.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="111"/>
+        <CursorPos X="25" Y="115"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+    </Units>
+    <JumpHistory Count="10" HistoryIndex="9">
+      <Position1>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="106" Column="10" TopLine="85"/>
+      </Position1>
+      <Position2>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="42" Column="19" TopLine="28"/>
+      </Position2>
+      <Position3>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="32" Column="50" TopLine="22"/>
+      </Position3>
+      <Position4>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="4" Column="17"/>
+      </Position4>
+      <Position5>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="81" Column="16" TopLine="73"/>
+      </Position5>
+      <Position6>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="82" Column="27" TopLine="71"/>
+      </Position6>
+      <Position7>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="112" Column="12" TopLine="96"/>
+      </Position7>
+      <Position8>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="134" Column="37" TopLine="117"/>
+      </Position8>
+      <Position9>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="31" Column="13" TopLine="20"/>
+      </Position9>
+      <Position10>
+        <Filename Value="p_ex_03.lpr"/>
+        <Caret Line="36" Column="18" TopLine="26"/>
+      </Position10>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
