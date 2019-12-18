@@ -1,7 +1,8 @@
 import numpy as np
 from copy import deepcopy
 
-size = 3
+def size():
+    return 3
 
 def get_opponent(player):
     if player == 0:
@@ -9,6 +10,17 @@ def get_opponent(player):
     elif player == 1 :
         return 0
     return None
+
+def print_field(s, level, player, score):
+    lst = []
+    for i in range(size()):
+        for j in range(size()):
+            if s[i][j] == None:
+                lst.append(2)
+            else:
+                lst.append(s[i][j])
+      
+    print('-'*(4-level), lst, get_score(s, player), score)
 
 def get_lines():
     lines = [
@@ -41,8 +53,8 @@ def get_moves(s, player):
     if is_win(s, 1) or is_win(s, 0):
         return moves    
 
-    for i in range(size):
-        for j in range(size):
+    for i in range(size()):
+        for j in range(size()):
             if s[i][j] == None:
                 move = deepcopy(s)
                 move[i][j] = player
@@ -70,7 +82,7 @@ def get_score(s, player):
         return -inf()
     return nc(s, player) - nc(s, get_opponent(player))
 
-def minimax(s, ply, player, opponent):
+def minimax(s, level, player):
     if player == 1:
         best = (None, -inf())
     else:
@@ -78,25 +90,23 @@ def minimax(s, ply, player, opponent):
 
     moves = get_moves(s, player)
 
-    if (ply == 0) or (moves == []):
-        score = get_score(s, player)
-        return (None, score)
+    if (level == 0) or (moves == []):
+        return (None, get_score(s, player))
 
     for move in moves:
-        new_move, new_score = minimax(move, ply-1, opponent, player)
+        _, new_score = minimax(move, level-1, get_opponent(player))
         if player == 1:
             if new_score > best[1]:
                 best = (move, new_score)  
         else:
             if new_score < best[1]:
                 best = (move, new_score)
+    
+    print_field(s, level, player, best[1])
 
     return best
 
-def best_move(s, ply, player, opponent):
-    return minimax(s, ply, player, opponent)
-
-field = [[0, None, 0],[None, 1, None],[None, None, 1]]
+field = [[None, None, 0],[None, 1, None],[None, None, 1]]
 print(field)
 
 print("win 1 = ", is_win(field, 1))
@@ -110,9 +120,11 @@ moves = get_moves(field, 0)
 for move in moves:
     print(move)
 
-move = best_move(field, 3, 1, 0)
+print("minimax:")
+move = minimax(field, 3, 0)
 
 print("field:")
 print(field)
+
 print("best move:")
 print(move)
