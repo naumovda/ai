@@ -7,7 +7,17 @@ class state:
     def __init__(self, data, depth=0):
         self._data = data
         self._depth = depth
-    
+
+        #ищем пустое поле
+        self._row = None
+        self._col = None
+        for i in range(state.size):
+            for j in range(state.size):
+                if self._data[i][j] == state.space:
+                    self._row = i
+                    self._col = j
+                    break
+  
     def __str__(self):
         s = ""
         for row in self._data:
@@ -29,38 +39,40 @@ class state:
         else:
             self._depth = value
 
+    def swap_cells(self, row1, col1, row2, col2, depth):
+        m = deepcopy(self._data)
+        m[row1][col1], m[row2][col2] = m[row2][col2], m[row1][col1]
+        return state(m, depth)
+
+    def swap_up(self, depth): 
+        return self.swap_cells(self._row, self._col, self._row-1, self._col, depth)
+
+    def swap_down(self, depth):
+        return self.swap_cells(self._row, self._col, self._row+1, self._col, depth)
+
+    def swap_left(self, depth):
+        return self.swap_cells(self._row, self._col, self._row, self._col-1, depth)  
+
+    def swap_right(self, depth):
+        return self.swap_cells(self._row, self._col, self._row, self._col+1, depth)        
+
     def get_moves(self):
-        moves = []
-        
-        #ищем пустое поле
-        for i in range(state.size):
-            for j in range(state.size):
-                if self._data[i][j] == state.space:
-                    si, sj = i, j
-                    break
-        
+        moves = []       
+       
         # если можно двигать фишку сверху
-        if si != 0:
-            m = deepcopy(self._data)
-            m[si][sj], m[si-1][sj] = m[si-1][sj], state.space            
-            moves.append(state(m, self._depth + 1))
+        if self._row != 0:
+            moves.append(self.swap_up(self._depth + 1))
         
         # если можно двигать фишку снизу
-        if si != state.size-1:
-            m = deepcopy(self._data)
-            m[si][sj], m[si+1][sj] = m[si+1][sj], state.space
-            moves.append(state(m, self._depth + 1))
+        if self._row != state.size-1:
+            moves.append(self.swap_down(self._depth + 1))
 
         # если можно двигать фишку слева
-        if sj != 0:
-            m = deepcopy(self._data)
-            m[si][sj], m[si][sj-1] = m[si][sj-1], state.space
-            moves.append(state(m, self._depth + 1))
+        if self._col != 0:
+            moves.append(self.swap_left(self._depth + 1))
 
         # если можно двигать фишку слева
-        if sj != state.size-1:
-            m = deepcopy(self._data)
-            m[si][sj], m[si][sj+1] = m[si][sj+1], state.space
-            moves.append(state(m, self._depth + 1))
+        if self._col != state.size-1:
+            moves.append(self.swap_right(self._depth + 1))
 
         return moves

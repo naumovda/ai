@@ -23,7 +23,7 @@ def dfs(initial, goal, max_depth):
     open_states = [initial]
     
     # список закрытых состояний
-    closed_states = []     
+    closed_states = []
 
     while open_states != []:
         # извлекаем последний элемент из списка открытых состояний
@@ -59,10 +59,7 @@ if __name__ == '__main__':
     initial = state([[8,1,3],[2,4,5],[state.space,7,6]], 0)
     goal = state([[1,2,3],[8,state.space,4],[7,6,5]])
 
-    f = lambda: dfs(initial, goal, 10)        
-    
-    # t = Timer(f)
-    # print("Time = ", t.timeit(number=100))
+    f = lambda: dfs(initial, goal, 10)          
 
     res = f()        
     print('has decision  :', res[0])    
@@ -71,3 +68,6 @@ if __name__ == '__main__':
     print('result path   :')    
     for m in res[1]:
         print(m)
+        
+    t = Timer(f)
+    print("Time = ", t.timeit(number=100))
