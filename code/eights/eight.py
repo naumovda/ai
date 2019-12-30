@@ -18,6 +18,12 @@ class state:
                     self._col = j
                     break
   
+    def __hash__(self):
+        k = self._data[0][0] + 10*self._data[0][1] + 100*self._data[0][2] \
+            + 1000*self._data[1][0] + 10000*self._data[1][1] + 100000*self._data[1][2] \
+            + 1000000*self._data[2][0] + 10000000*self._data[2][1] + 100000000*self._data[2][2]
+        return k
+
     def __str__(self):
         s = ""
         for row in self._data:
