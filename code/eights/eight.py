@@ -68,17 +68,17 @@ class state:
         # если можно двигать фишку сверху
         if self._row != 0:
             moves.append(self.swap_up(self._depth + 1))
-        
-        # если можно двигать фишку снизу
-        if self._row != state.size-1:
-            moves.append(self.swap_down(self._depth + 1))
 
         # если можно двигать фишку слева
         if self._col != 0:
             moves.append(self.swap_left(self._depth + 1))
 
-        # если можно двигать фишку слева
+        # если можно двигать фишку справа
         if self._col != state.size-1:
             moves.append(self.swap_right(self._depth + 1))
+
+        # если можно двигать фишку снизу
+        if self._row != state.size-1:
+            moves.append(self.swap_down(self._depth + 1))
 
         return moves

@@ -1,5 +1,6 @@
 from timeit import Timer
-from eight import state
+# from eight import state
+from eight_dict import state
 
 def bfs(initial, goal):
     """breadth search function
@@ -58,6 +59,8 @@ def bfs(initial, goal):
 if __name__ == '__main__':
     initial = state([[8,1,3],[2,4,5],[state.space,7,6]], 0)
     goal = state([[1,2,3],[8,state.space,4],[7,6,5]])
+
+    print(initial)
 
     f = lambda: bfs(initial, goal)          
 

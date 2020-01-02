@@ -1,5 +1,6 @@
 from timeit import Timer
-from eight import state
+# from eight import state
+from eight_dict import state
 
 def dfs(initial, goal, max_depth):
     """Deep search function
@@ -59,15 +60,15 @@ if __name__ == '__main__':
     initial = state([[8,1,3],[2,4,5],[state.space,7,6]], 0)
     goal = state([[1,2,3],[8,state.space,4],[7,6,5]])
 
-    f = lambda: dfs(initial, goal, 16)          
+    f = lambda: dfs(initial, goal, 20)          
 
     res = f()        
     print('has decision  :', res[0])    
     print('open states   :', res[2])    
     print('closed states :', res[3])        
-    print('result path   :')    
-    for m in res[1]:
-        print(m)
+    # print('result path   :')    
+    # for m in res[1]:
+    #     print(m)
         
     t = Timer(f)
     print("Time = ", t.timeit(number=1))
