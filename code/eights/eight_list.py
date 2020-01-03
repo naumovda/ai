@@ -19,15 +19,19 @@ class state:
         return k
 
     def __str__(self):
-        s = ""
-        for row in self._data:
-            s += f"{row}"
-            if self.row_split:
-                s += "\n"
-        return s
+        # s = ""
+        # for row in self._data:
+        #     for 
+        #     s += f"{row}"
+        #     if self.row_split:
+        #         s += "\n"
+        return str(self._data)
     
     def __eq__(self, other):
         return self._data == other._data
+
+    def __lt__(self, other):
+        return self._depth < other._depth
 
     @property
     def depth(self):

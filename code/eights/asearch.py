@@ -1,13 +1,13 @@
 from queue import PriorityQueue
+from eight_list import state 
 from timeit import Timer
-from eight_list import state
 
 # Fair Evaluator ::= P(h)
 #   P(h) - сумма манхеттенских расстояний между ячейками текущего состояния и целевым
 def fair_evaluator(state, goal):
     size = state.size    
-    src = [(0,0) for i in range(size)]
-    dst = [(0,0) for i in range(size)]
+    src = [(0,0) for i in range(size*size)]
+    dst = [(0,0) for i in range(size*size)]
 
     for row in range(size):
         for col in range(size):
@@ -27,8 +27,14 @@ def fair_evaluator(state, goal):
 #             2 - в противном случае 
 #             1 - если это плитка в центре 
 def good_evaluator(state, goal):
-    
-    return fair_evaluator(state, goal) + 3
+    cells = [(0,1), (1, 2), (2, 5), (5, 8), (8, 7), (7, 6), (6, 3), (3, 0)]
+    s = 0
+    for first, second in cells:
+        if state._data[first] + 1 != state._data[second]:
+            s += 2
+    if state._data[4] != state.space:
+        s += 1
+    return fair_evaluator(state, goal) + 3*s
 
 # Weak Evaluator ::= N(h)
 #   N(h) - количество плиток не на своем месте
@@ -43,8 +49,14 @@ def weak_evaluator(state, goal):
 #   D(h) - сумма модулей разности значений противоположных (относительно центра) плиток для текущего состояния
 #   G(h) - сумма модулей разности значений противоположных (относительно центра) плиток для целевого состояния      
 def bad_evaluator(state, goal):
-    d = abs(state[0] - state[9]) + abs(state[1] - state[8]) + abs(state[2] - state[7]) + abs(state[3] - state[6])
-    g = abs(goal[0] - goal[9]) + abs(goal[1] - goal[8]) + abs(goal[2] - goal[7]) + abs(goal[3] - goal[6])
+    d = abs(state._data[0] - state._data[8]) \
+        + abs(state._data[1] - state._data[7]) \
+        + abs(state._data[2] - state._data[6]) \
+        + abs(state._data[3] - state._data[5])
+    g = abs(goal._data[0] - goal._data[8]) \
+        + abs(goal._data[1] - goal._data[7]) \
+        + abs(goal._data[2] - goal._data[8]) \
+        + abs(goal._data[3] - goal._data[5])
     return abs(d-g)
 
 def a_search(initial, goal, evaluator):
@@ -53,29 +65,29 @@ def a_search(initial, goal, evaluator):
     Keyword arguments:
     initial -- inital state, start of the search tree
     goal -- final state, we want to find path
-    priority -- a function to calculate priority for queue
+    evaluator -- a function to calculate priority for queue
 
-    Return: a tuple (is_find, path, open_state_count, close_state_count)
+    Return: a dict (solved, path, open state count, close_state_count)
     is_find -- does path has been found
     path -- a path to final state, a solution 
     open_state_count -- count of elements in open states list
     close_state_count -- count of elements in close states list
     """
     if initial == goal: # начальное состояние равно целевому
-        return (True, [], 0, 0)
+        return {'solved':True, 'path': [initial], 'openstates':1, 'closedstates':0}
     
     initial._depth = 0
     
     # список открытых состояний      
     open_states = PriorityQueue()
-    open_states.put(evaluator(initial), 0, initial)
+    open_states.put((evaluator(initial, goal), initial))
     
     # список закрытых состояний
     closed_states = set()
 
     while not open_states.empty():
         # извлекаем первый элемент из (очереди) списка открытых состояний
-        _, _, current = open_states.get()
+        _, current = open_states.get()
 
         # добавляем его в закрытые
         closed_states.add(current)
@@ -83,13 +95,17 @@ def a_search(initial, goal, evaluator):
         if current == goal:
             # сформировать список ходов до текущего
             path = [current]
-            return (True, path, len(open_states), len(closed_states))
+            return {'solved':True, 
+                'path': path, 
+                'openstates':len(open_states.queue), 
+                'closedstates':len(closed_states)
+                }
 
         # генерируем список возможных ходов
         for move in current.get_moves():
             # если этот ход не в списке закрытых состояний
             if not move in closed_states:               
-                move.depth = current.depth + 1
+                move._depth = current._depth + 1
                 # по алгоритму надо проверить, есть ли move 
                 # в очереди открытых состояний
                 # извлечь его и сравнить с приоритетом 
@@ -99,23 +115,35 @@ def a_search(initial, goal, evaluator):
                 # но если не искать и не удалять, что мы просто потом 
                 # извлекая очередное состояние из очереди будем видеть,
                 # что оно уже есть в закрытых
-                open_states.put(evaluator(move), 0, move)
+                open_states.put((evaluator(move, goal) + move.depth, move))
 
-    return (False, [], -1, -1) # нет решения, возвращаем пустой список
+    # нет решения, возвращаем пустой список
+    return {'solved':False, 
+        'path': [], 
+        'openstates':len(open_states.queue), 
+        'closedstates':len(closed_states)
+        }
 
 if __name__ == '__main__':
-    initial = state([[8,1,3],[2,4,5],[state.space,7,6]], 0)
-    goal = state([[1,2,3],[8,state.space,4],[7,6,5]])
+    initial = state([2,1,6,4,0,8,7,5,3], 4, 0)
+    goal = state([1,2,3,8,0,4,7,6,5], 4)
 
-    f = lambda: a_search(initial, goal, weak_evaluator)          
+    # fair_evaluator
+    # good_evaluator
+    # weak_evaluator
+    # bad_evaluator
+    f = lambda: a_search(initial, goal, fair_evaluator)
+    # f = lambda: a_search(initial, goal, good_evaluator)
+    # f = lambda: a_search(initial, goal, weak_evaluator)
+    # f = lambda: a_search(initial, goal, bad_evaluator)
 
     res = f()        
-    print('has decision  :', res[0])    
-    print('open states   :', res[2])    
-    print('closed states :', res[3])        
+    print('has decision  :', res['solved'])    
+    print('open states   :', res['openstates'])    
+    print('closed states :', res['closedstates'])
     print('result path   :')    
-    for m in res[1]:
+    for m in res['path']:
         print(m)
         
     t = Timer(f)
-    print("Time = ", t.timeit(number=100))
+    print("Time = ", t.timeit(number=1))
