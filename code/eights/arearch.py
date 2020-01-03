@@ -1,11 +1,24 @@
 from queue import PriorityQueue
 from timeit import Timer
-from eight_dict import state
+from eight_list import state
 
 # Fair Evaluator ::= P(h)
-#   P(h) - сумма манхеттенских расстояний между всеми ячейками
+#   P(h) - сумма манхеттенских расстояний между ячейками текущего состояния и целевым
 def fair_evaluator(state, goal):
-    return 0
+    size = state.size    
+    src = [(0,0) for i in range(size)]
+    dst = [(0,0) for i in range(size)]
+
+    for row in range(size):
+        for col in range(size):
+            src[state._data[row*size+col]] = (row, col)
+            dst[goal._data[row*size+col]] = (row, col)
+
+    dist = 0
+    for idx in range(len(src)):
+        dist += abs(src[idx][0]-dst[idx][0]) + abs(src[idx][1]-dst[idx][1])
+
+    return dist
 
 # Good Evaluator ::= P(h)+3-S(h)
 #   P(h) - сумма манхеттенских расстояний между всеми ячейками
@@ -14,24 +27,25 @@ def fair_evaluator(state, goal):
 #             2 - в противном случае 
 #             1 - если это плитка в центре 
 def good_evaluator(state, goal):
-    return 0
+    
+    return fair_evaluator(state, goal) + 3
 
 # Weak Evaluator ::= N(h)
 #   N(h) - количество плиток не на своем месте
 def weak_evaluator(state, goal):
     count = 0
-    for i in range(state.size):
-        for j in range(state.size):
-            if state._data[i][j] != goal._data[i][j]:
-                count += 1
-    return state._depth + count 
+    for k in range(len(state._data)):
+        if state._data[k] != goal._data[k]:
+            count += 1
+    return count 
 
 # Bad Evaluator ::= |D(h) - 16|
-#   D(h) - разность значений противоположных плиток
-#          относительно центра
+#   D(h) - сумма модулей разности значений противоположных (относительно центра) плиток для текущего состояния
+#   G(h) - сумма модулей разности значений противоположных (относительно центра) плиток для целевого состояния      
 def bad_evaluator(state, goal):
-    return 0
-
+    d = abs(state[0] - state[9]) + abs(state[1] - state[8]) + abs(state[2] - state[7]) + abs(state[3] - state[6])
+    g = abs(goal[0] - goal[9]) + abs(goal[1] - goal[8]) + abs(goal[2] - goal[7]) + abs(goal[3] - goal[6])
+    return abs(d-g)
 
 def a_search(initial, goal, evaluator):
     """A*search algorythm function

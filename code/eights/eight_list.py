@@ -44,7 +44,10 @@ class state:
         m = deepcopy(self._data)
         m[cell1] = self._data[cell2]
         m[cell2] = self._data[cell1]
-        return state(m, depth)
+        if self._free == cell1:
+            return state(m, cell2, depth)
+        else:
+            return state(m, cell1, depth)
 
     def swap_up(self, depth): 
         return self.swap_cells(self._free, self._free-3, depth)
@@ -59,18 +62,13 @@ class state:
         return self.swap_cells(self._free, self._free+1, depth)        
 
     def get_moves(self):
-        moves = []       
-       
+        moves = []  
         if not self._free in [0,1,2]:
             moves.append(self.swap_up(self._depth + 1))
-        
         if not self._free in [0,4,6]:
             moves.append(self.swap_left(self._depth + 1))
-
         if not self._free in [3,5,8]:
             moves.append(self.swap_right(self._depth + 1))
-
         if not self._free in [6,7,8]:
             moves.append(self.swap_down(self._depth + 1))
-
         return moves
