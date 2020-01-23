@@ -10,7 +10,7 @@ gill_spacing = {'c':'close', 'w':'crowded', 'd':'distant'}
 gill_size = {'b':'broad', 'n':'narrow'}
 gill_color = {'k':'black','n':'brown','b':'buff','h':'chocolate','g':'gray', 'r':'green','o':'orange','p':'pink', 'u':'purple','e':'red', 'w':'white','y':'yellow'}
 stalk_shape = {'e':'enlarging','t':'tapering'}
-stalk_root = {'b':'bulbous','c':'club','u':'cup','e':'equal', 'z':'rhizomorphs','r':'rooted',' ':'missing'}
+stalk_root = {'b':'bulbous','c':'club','u':'cup','e':'equal', 'z':'rhizomorphs','r':'rooted', '':'missing'}
 stalk_surface_above_ring = {'f':'fibrous','y':'scaly','k':'silky','s':'smooth'}
 stalk_surface_below_ring = {'f':'fibrous','y':'scaly','k':'silky','s':'smooth'}
 stalk_color_above_ring = {'n':'brown', 'b':'buff', 'c':'cinnamon','g':'gray','o':'orange','p':'pink','e':'red','w':'white','y':'yellow'}
@@ -50,6 +50,7 @@ dicts = [
     ('class', mushroom_class)
 ]
 
+universal = []
 normal_indexes = {}  
 index = 0
 for d in dicts:
@@ -57,7 +58,10 @@ for d in dicts:
     elems = d[1]
     for item in sorted(elems.keys()):
         normal_indexes[f"{name}-{elems[item]}"] = index
+        universal.append(index)
         index += 1
+
+print(universal)
 
 class itemset:
     '''
@@ -67,21 +71,24 @@ class itemset:
         Методы:
             support - поддержка набора в базе данных 
     '''
-    def __init__(self, items=set()):
-        self.items = items
+    def __init__(self, itemset=set()):
+        self.itemset = itemset
         self.count = 0
         self.total = 0
 
-    def __add__(self, value):
-        self.items += value       
+    def add(self, value):
+        self.itemset.add(value)
+
+    def union(self, other):
+        result = set()
+        result.update(self)
+        result.update(other)
+        return result
 
     def support(self):
         if self.total == 0:
-            return 0
+            return 0        
         return self.count/self.total
-
-    def calc_support(self, database):
-        pass
 
 class transaction:
     '''
@@ -94,13 +101,14 @@ class transaction:
         self.tid = transaction.cid
         self.itemset = set()
 
-    def __add__(self, item):
-        self.itemset += item
+    def add(self, item):
+        self.itemset.add(item)
 
     def load(self, field_names, row):
         k = 0
         for field in field_names:            
             title = f"{field}-{dicts[k][1][row[field]]}"            
+            self.add(normal_indexes[title])
             k += 1
 
 class database:
@@ -122,17 +130,45 @@ class database:
             for row in reader:
                 trans = transaction()
                 trans.load(self.field_names, row)
+                self.append(trans)
 
 class rule:
     pass
 
-if __name__ == "__main__":
-    # print(len(normal_indexes))
-    print(normal_indexes)
-    # загружаем csv
-    db = database()  
-    db.load('mushroom_csv.csv') 
+def print_set(s):
+    l = []
+    for item in universal:
+        if item in s:
+            l.append(item)
+    print(l)
 
-    # t = db.items[1]
-    # for i in t.items:
-    #     print(i)
+def calc_support(itemsetlist, database):
+    total = len(database.items)
+    
+    for itemset in itemsetlist:
+        itemset.count = 0
+        itemset.total = total
+
+    for transaction in database.items:
+        # print(transaction.tid)
+        for itemset in itemsetlist:            
+            # print_set(itemset.itemset)
+            if itemset.itemset <= transaction.itemset:
+                itemset.count += 1
+        # break
+
+if __name__ == "__main__":
+    # загружаем файл данных
+    db = database()  
+    db.load('mushroom_csv.csv')
+    
+    # формируем одноэлементные наборы 
+    itemsetlist = []
+    for item in universal:        
+        itemsetlist.append(itemset(set([item])))        
+
+    # рассчитываем их поддержку
+    calc_support(itemsetlist, db)
+
+    for itemset in itemsetlist:
+        print(itemset.itemset, itemset.support())
