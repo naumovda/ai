@@ -1,68 +1,3 @@
-import csv
-
-cap_shape = {'b':'bell', 'c':'conical', 'x':'convex', 'f':'flat', 'k':'knobbed', 's':'sunken'}
-cap_surface = {'f':'fibrous', 'g':'grooves', 'y':'scaly', 's':'smooth'}
-cap_color = {'n':'brown', 'b':'buff', 'c':'cinnamon','g':'gray','r':'green','p':'pink','u':'purple','e':'red','w':'white','y':'yellow'}
-bruises = {'t':'bruises','f':'no'}
-odor = {'a':'almond', 'l':'anise','c':'creosote','y':'fishy','f':'foul','m':'musty','n':'none','p':'pungent','s':'spicy'}
-gill_attachment = {'a':'attached','d':'descending','f':'free','n':'notched'}
-gill_spacing = {'c':'close', 'w':'crowded', 'd':'distant'}
-gill_size = {'b':'broad', 'n':'narrow'}
-gill_color = {'k':'black','n':'brown','b':'buff','h':'chocolate','g':'gray', 'r':'green','o':'orange','p':'pink', 'u':'purple','e':'red', 'w':'white','y':'yellow'}
-stalk_shape = {'e':'enlarging','t':'tapering'}
-stalk_root = {'b':'bulbous','c':'club','u':'cup','e':'equal', 'z':'rhizomorphs','r':'rooted', '':'missing'}
-stalk_surface_above_ring = {'f':'fibrous','y':'scaly','k':'silky','s':'smooth'}
-stalk_surface_below_ring = {'f':'fibrous','y':'scaly','k':'silky','s':'smooth'}
-stalk_color_above_ring = {'n':'brown', 'b':'buff', 'c':'cinnamon','g':'gray','o':'orange','p':'pink','e':'red','w':'white','y':'yellow'}
-stalk_color_below_ring = {'n':'brown', 'b':'buff', 'c':'cinnamon','g':'gray','o':'orange','p':'pink','e':'red','w':'white','y':'yellow'}
-veil_type = {'p':'partial', 'u':'universal'}
-veil_color = {'n':'brown', 'o':'orange', 'w':'white','y':'yellow'}
-ring_number = {'n':'none','o':'one', 't':'two'}
-ring_type = {'c':'cobwebby','e':'evanescent','f':'flaring','l':'large', 'n':'none','p':'pendant','s':'sheathing','z':'zone'}
-spore_print_color = {'k':'black', 'n':'brown', 'b':'buff', 'h':'chocolate', 'r':'green', 'o':'orange', 'u':'purple', 'w':'white', 'y':'yellow'}
-population = {'a':'abundant','c':'clustered','n':'numerous', 's':'scattered','v':'several','y':'solitary'}
-habitat = {'g':'grasses','l':'leaves','m':'meadows','p':'paths', 'u':'urban','w':'waste','d':'woods'}
-mushroom_class = {'e':'editable', 'p':'poisonous'}
-
-dicts = [
-    ('cap-shape', cap_shape),
-    ('cap-surface', cap_surface),
-    ('cap-color', cap_color),
-    ('bruises', bruises),
-    ('odor', odor),
-    ('gill-attachment', gill_attachment),
-    ('gill-spacing', gill_spacing),
-    ('gill-size', gill_size),
-    ('gill-color', gill_color),
-    ('stalk-shape', stalk_shape), 
-    ('stalk-root', stalk_root), 
-    ('stalk-surface-above-ring', stalk_surface_above_ring),
-    ('stalk-surface-below-ring', stalk_surface_below_ring),
-    ('stalk-color-above-ring', stalk_color_above_ring),
-    ('stalk-color-below-ring', stalk_color_below_ring),
-    ('veil-type', veil_type),
-    ('veil-color', veil_color),
-    ('ring-number', ring_number),
-    ('ring-type', ring_type),
-    ('spore-print-color', spore_print_color),
-    ('population', population),
-    ('habitat', habitat),
-    ('class', mushroom_class)
-]
-
-universal = []
-normal_indexes = {}  
-index = 0
-for d in dicts:
-    name = d[0]
-    elems = d[1]
-    for item in sorted(elems.keys()):
-        normal_indexes[f"{name}-{elems[item]}"] = index
-        universal.append(index)
-        index += 1
-
-print(universal)
-
 class itemset:
     '''
     Элемент
@@ -90,85 +25,206 @@ class itemset:
             return 0        
         return self.count/self.total
 
+    def __eq__(self, value):
+        return self.itemset == value.itemset
+
+    def __str__(self):
+        return f"set={self.itemset}, support={self.support()}"
+
 class transaction:
     '''
     Транзакция, имеющая идентификатор и содержащая набор элементов 
     '''
     cid = -1
 
-    def __init__(self):
+    def __init__(self, itemset=set()):
         transaction.cid += 1
         self.tid = transaction.cid
         self.itemset = set()
+        self.itemset.update(itemset)
 
     def add(self, item):
         self.itemset.add(item)
+    
+    def update(self, items):
+        self.itemset.update(items)
 
-    def load(self, field_names, row):
-        k = 0
-        for field in field_names:            
-            title = f"{field}-{dicts[k][1][row[field]]}"            
-            self.add(normal_indexes[title])
-            k += 1
+    def to_list(self, fields):
+        items = []
+        for item in fields:
+            if item in self.itemset:
+                items.append(item)
+        return items
+
+    def to_boolean_list(self, fields):
+        items = []
+        for item in fields:
+            if item in self.itemset:
+                items.append('1')
+            else:
+                items.append('0')
+        return items
 
 class database:
     '''
     База данных, состоящая из транзакций
     '''
-    def __init__(self):
-        self.field_names = []
-        self.items = []
+    def __init__(self, fields=[], transactions=[]):
+        self.fields = fields
+        self.transactions = transactions
 
-    def append(self, item):
-        self.items.append(item)
+    def add_transaction(self, item):
+        self.transactions.append(item)
+
+    def calc_support(self, itemsets):
+        total = len(self.transactions)   
+        for itemset in itemsets:
+            itemset.count = 0
+            itemset.total = total
+        for transaction in self.transactions:
+            for itemset in itemsets: 
+                if itemset.itemset <= transaction.itemset:
+                    itemset.count += 1
+
+    def print_set(self):
+        for t in self.transactions:
+            print(t.tid, " ".join(t.to_list(self.fields)))
+        print()
+
+    def print_boolean(self):
+        print("#", " ".join(self.fields))
+        for t in self.transactions:
+            print(t.tid, " ".join(t.to_boolean_list(self.fields)))
+        print()
 
     def load(self, file_name):
-        with open(file_name, newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            self.field_names = reader.fieldnames
-            self.items = []            
-            for row in reader:
-                trans = transaction()
-                trans.load(self.field_names, row)
-                self.append(trans)
+        pass
+
+class apriori:
+    def __init__(self, min_support):
+        self.min_support = min_support
+        self.itemsets = []
+
+    def append_itemsets(self, items):
+        # формируем список наборов с поддержкой, большей min_support
+        res = []
+        for item in items:
+            if item.support() >= self.min_support:
+                res.append(item)
+        self.itemsets.append(res)
+
+    def step_0(self, db):
+        self.itemsets = []
+        # формируем одноэлементные наборы 
+        items = []        
+        for item in db.fields:
+            items.append(itemset(set([item])))        
+        # рассчтываем поддержку одноэлементных наборов
+        db.calc_support(items)
+        # добавляем в список
+        self.append_itemsets(items)        
+        
+    def step_k(self, db):
+        if self.itemsets[-1] == []:
+            return False
+        items = []
+        for e1 in self.itemsets[0]:
+            for e2 in self.itemsets[-1]:
+                if not e1.itemset <= e2.itemset:
+                    s = set()
+                    s.update(e1.itemset)
+                    s.update(e2.itemset)                    
+                    e = itemset(s)
+                    if not e in items:
+                        items.append(e)
+        # рассчтываем поддержку наборов
+        db.calc_support(items)
+        # добавляем в список
+        self.append_itemsets(items)       
+        # возвращаем признак того, что можно продолжать
+        return True
 
 class rule:
     pass
 
-def print_set(s):
-    l = []
-    for item in universal:
-        if item in s:
-            l.append(item)
-    print(l)
-
-def calc_support(itemsetlist, database):
-    total = len(database.items)
-    
-    for itemset in itemsetlist:
-        itemset.count = 0
-        itemset.total = total
-
-    for transaction in database.items:
-        # print(transaction.tid)
-        for itemset in itemsetlist:            
-            # print_set(itemset.itemset)
-            if itemset.itemset <= transaction.itemset:
-                itemset.count += 1
-        # break
-
 if __name__ == "__main__":
     # загружаем файл данных
-    db = database()  
-    db.load('mushroom_csv.csv')
+    db = database(['A','B','C','D','E','F'])
+    
+    t1 = transaction(set(['A','B','C']))
+    t2 = transaction(set(['A','C']))
+    t3 = transaction(set(['A','D']))
+    t4 = transaction(set(['B','E','F']))
+
+    db.add_transaction(t1)
+    db.add_transaction(t2)
+    db.add_transaction(t3)
+    db.add_transaction(t4)
+
+    db.print_set()
+    db.print_boolean()
+
+    alg = apriori(0.25)
+    alg.step_0(db)
+
+    while alg.step_k(db):
+        pass
+
+    k = 0
+    for level in alg.itemsets:        
+        print('level', k)
+        for item in level:
+            print(item)
+        k += 1
+    # db.load('mushroom_csv.csv')
     
     # формируем одноэлементные наборы 
-    itemsetlist = []
-    for item in universal:        
-        itemsetlist.append(itemset(set([item])))        
+    # itemsetlist = []
+    # for item in universal:        
+    #     itemsetlist.append(itemset(set([item])))
 
-    # рассчитываем их поддержку
-    calc_support(itemsetlist, db)
+    # calc_support(itemsetlist, db)
+    
+    # c1 = []
+    # for item in itemsetlist:
+    #     if item.support() > min_support:
+    #         c1.append(item)
 
-    for itemset in itemsetlist:
-        print(itemset.itemset, itemset.support())
+    # itemsetlist = []
+    # for e1 in c1:
+    #     for e2 in c1:
+    #         if not e2.itemset <= e1.itemset:
+    #             s = set()
+    #             s.update(e1.itemset)
+    #             s.update(e2.itemset)
+    #             e = itemset(s)
+    #             itemsetlist.append(e)
+    
+    # calc_support(itemsetlist, db)
+    
+    # c2 = []
+    # for item in itemsetlist:
+    #     if item.support() > min_support:
+    #         c2.append(item)
+
+    # itemsetlist = []
+    # for e1 in c2:
+    #     for e2 in c1:
+    #         if not e2.itemset <= e1.itemset:
+    #             s = set()
+    #             s.update(e1.itemset)
+    #             s.update(e2.itemset)
+    #             e = itemset(s)
+    #             itemsetlist.append(e)
+    
+    # calc_support(itemsetlist, db)
+    
+    # c3 = []
+    # for item in itemsetlist:
+    #     if item.support() > min_support:
+    #         c3.append(item)
+
+    # for item in c3:
+    #     print_set(item.itemset)
+    #     print(item.support())
+    
