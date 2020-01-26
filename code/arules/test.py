@@ -2,16 +2,21 @@
 # for key in sorted(d.keys()):
 #     print(key, d[key])
 
-s1 = set([1, 2, 3])
+s1 = [1, 2, 3, 4, 5]
 
-s2 = set([2, 4])
+n =2**len(s1)
 
-# s2.update(s1)
+print(n)
 
-s3 = set()
-s3 += s2
-s3 += s1
+def confidence(rule):
+    return 1.0
 
-print(s1)
-print(s2)
-print(s3)
+def assoc_rules(rules, items, seq, min_confidence):
+    items = list()
+    seq = list()
+    for item in items:
+        new_items = items.copy()
+        new_items.remove(item)
+        seq.append(item)
+        if confidence(None) >= min_confidence:
+            

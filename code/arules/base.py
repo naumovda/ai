@@ -145,8 +145,12 @@ class apriori:
         return True
 
 class rule:
-    pass
-
+    def __init__(self, antecedent, consequent, support, confidence):
+        self.antecedent = antecedent
+        self.consequent = consequent
+        self.support = support
+        self.confidence = confidence   
+   
 if __name__ == "__main__":
     # загружаем файл данных
     db = database(['A','B','C','D','E','F'])
