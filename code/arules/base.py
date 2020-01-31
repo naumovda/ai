@@ -68,19 +68,19 @@ class database:
             print(t.tid, " ".join(t.get_boolean(self.fields)))
         print()
 
+    def calc_support(self, itemsets, support):
+        count = {itemset:0 for itemset in itemsets}
+        for transaction in self.transactions:
+            for itemset in itemsets: 
+                if itemset <= transaction.itemset:
+                    count[itemset] += 1
+        total = len(self.transactions)   
+        for itemset in itemsets: 
+            support[itemset] = count[itemset] / total      
+
     def load(self, file_name):
         pass
-
-def calc_support(database, itemsets, support):
-    count = {itemset:0 for itemset in itemsets}
-    for transaction in database.transactions:
-        for itemset in itemsets: 
-            if itemset.itemset <= transaction.itemset:
-                count[itemset] += 1
-    total = len(database.transactions)   
-    for itemset in itemsets: 
-        support[itemset] = count[itemset] / total       
-
+  
 def subsets(source):
     result = []
     for item in source:
@@ -110,29 +110,26 @@ class apriori:
         # формируем одноэлементные наборы 
         items = [frozenset([item]) for item in db.fields]        
         # рассчтываем поддержку одноэлементных наборов
-        calc_support(db, items, self.support)
+        db.calc_support(items, self.support)
         # добавляем в список
-        self.itemsets.append(self.filter(items, self.support))        
+        self.itemsets.append(self.filter(items, self.support))
         
-    # def step_k(self, db):
-    #     if self.itemsets[-1] == []:
-    #         return False
-    #     items = []
-    #     for e1 in self.itemsets[0]:
-    #         for e2 in self.itemsets[-1]:
-    #             if not e1.itemset <= e2.itemset:
-    #                 s = set()
-    #                 s.update(e1.itemset)
-    #                 s.update(e2.itemset)                    
-    #                 e = itemset(s)
-    #                 if not e in items:
-    #                     items.append(e)
-    #     # рассчтываем поддержку наборов
-    #     db.calc_support(items)
-    #     # добавляем в список
-    #     self.append_itemsets(items)       
-    #     # возвращаем признак того, что можно продолжать
-    #     return True
+    def step_k(self, db):
+        if self.itemsets[-1] == []:
+            return False
+        items = []
+        for e1 in self.filter(self.itemsets[0], self.min_support):
+            for e2 in self.itemsets[-1]:
+                if not e1.itemset <= e2.itemset:                    
+                    s = frozenset(e2.union(e1))  
+                    if not s in items:
+                        items.append(e)
+        # рассчтываем поддержку наборов
+        db.calc_support(items, self.support)
+        # добавляем в список
+        self.itemsets.append(self.filter(items, self.support))
+        # возвращаем признак того, что можно продолжать
+        return self.itemsets[-1] != []:
 
 # class rule:
 #     def __init__(self, antecedent, consequent, support, confidence):
@@ -158,8 +155,10 @@ if __name__ == "__main__":
     db.print_as_set()
     db.print_as_boolean()
 
-    # alg = apriori(0.25)
-    # alg.step_0(db)
+    alg = apriori(0.40, 0.50)
+    alg.step_0(db)
+    for key in alg.support.keys():
+        print(list(key), alg.support[key])
 
     # while alg.step_k(db):
     #     pass
