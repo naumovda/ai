@@ -1,4 +1,5 @@
 import csv
+from base import apriori, database, rule, transaction
 
 cap_shape = {'b':'bell', 'c':'conical', 'x':'convex', 'f':'flat', 'k':'knobbed', 's':'sunken'}
 cap_surface = {'f':'fibrous', 'g':'grooves', 'y':'scaly', 's':'smooth'}
@@ -51,171 +52,48 @@ dicts = [
 ]
 
 universal = []
-normal_indexes = {}  
+indexes = {}  
+names = {}
+
 index = 0
 for d in dicts:
     name = d[0]
     elems = d[1]
     for item in sorted(elems.keys()):
-        normal_indexes[f"{name}-{elems[item]}"] = index
+        indexes[f"{name}-{elems[item]}"] = index
+        names[index] = f"{name}-{elems[item]}"
         universal.append(index)
         index += 1
 
-# print(universal)
-
-class itemset:
-    '''
-    Элемент
-        Атрибуты:
-            items - множество элементов, входящих в набор
-        Методы:
-            support - поддержка набора в базе данных 
-    '''
-    def __init__(self, itemset=set()):
-        self.itemset = itemset
-        self.count = 0
-        self.total = 0
-
-    def add(self, value):
-        self.itemset.add(value)
-
-    def union(self, other):
-        result = set()
-        result.update(self)
-        result.update(other)
-        return result
-
-    def support(self):
-        if self.total == 0:
-            return 0        
-        return self.count/self.total
-
-class transaction:
-    '''
-    Транзакция, имеющая идентификатор и содержащая набор элементов 
-    '''
-    cid = -1
-
-    def __init__(self):
-        transaction.cid += 1
-        self.tid = transaction.cid
-        self.itemset = set()
-
-    def add(self, item):
-        self.itemset.add(item)
-
-    def load(self, field_names, row):
+class mushroom_database(database):
+    def create_transaction(self, tid, field_names, row):
+        s = list()
         k = 0
         for field in field_names:            
             title = f"{field}-{dicts[k][1][row[field]]}"            
-            self.add(normal_indexes[title])
+            s.append(indexes[title])
             k += 1
-
-class database:
-    '''
-    База данных, состоящая из транзакций
-    '''
-    def __init__(self):
-        self.field_names = []
-        self.items = []
-
-    def append(self, item):
-        self.items.append(item)
+        return transaction(tid, frozenset(s))
 
     def load(self, file_name):
         with open(file_name, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             self.field_names = reader.fieldnames
-            self.items = []            
+            self.fields = [key in sorted(names.keys())]
+            self.items = []
+            tid = 0       
             for row in reader:
-                trans = transaction()
-                trans.load(self.field_names, row)
-                self.append(trans)
-
-class rule:
-    pass
-
-def print_set(s):
-    l = []
-    for item in sorted(universal):
-        if item in s:
-            l.append(item)
-    print(l)
-
-def calc_support(itemsetlist, database):
-    total = len(database.items)
-    
-    for itemset in itemsetlist:
-        itemset.count = 0
-        itemset.total = total
-
-    for transaction in database.items:
-        # print(transaction.tid)
-        for itemset in itemsetlist:            
-            # print_set(itemset.itemset)
-            if itemset.itemset <= transaction.itemset:
-                itemset.count += 1
-        # break
+                trans = self.create_transaction(tid, self.field_names, row)
+                self.add_transaction(trans)
+                tid += 1
 
 if __name__ == "__main__":
-    # минимальное значение параметра "поддержка"
-    min_support = 0.3
+    # print(universal)
+    # print(indexes)
+    # print(names)
 
     # загружаем файл данных
-    db = database()  
+    db = mushroom_database()
     db.load('mushroom_csv.csv')
-    
-    # формируем одноэлементные наборы 
-    itemsetlist = []
-    for item in universal:        
-        itemsetlist.append(itemset(set([item])))        
 
-    # рассчитываем их поддержку
-    calc_support(itemsetlist, db)
-    
-    c1 = []
-    for item in itemsetlist:
-        if item.support() > min_support:
-            c1.append(item)
-
-    # формируем наборы следующего уровня
-    itemsetlist = []
-    for e1 in c1:
-        for e2 in c1:
-            if not e2.itemset <= e1.itemset:
-                s = set()
-                s.update(e1.itemset)
-                s.update(e2.itemset)
-                e = itemset(s)
-                itemsetlist.append(e)
-    
-    # рассчитываем их поддержку
-    calc_support(itemsetlist, db)
-    
-    c2 = []
-    for item in itemsetlist:
-        if item.support() > min_support:
-            c2.append(item)
-
-    itemsetlist = []
-    for e1 in c2:
-        for e2 in c1:
-            if not e2.itemset <= e1.itemset:
-                s = set()
-                s.update(e1.itemset)
-                s.update(e2.itemset)
-                e = itemset(s)
-                itemsetlist.append(e)
-    
-    # рассчитываем их поддержку
-    calc_support(itemsetlist, db)
-    
-    c3 = []
-    for item in itemsetlist:
-        if item.support() > min_support:
-            c3.append(item)
-
-    for item in c3:
-        print_set(item.itemset)
-        print(item.support())
-    
+    db.print_as_boolean()    
