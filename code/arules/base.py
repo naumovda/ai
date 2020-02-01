@@ -96,7 +96,7 @@ class apriori:
 
     def step_0(self):
         self.itemsets = []
-        self.support = {frozenset():1}
+        self.support = {frozenset():-1}
         self.rules = []        
         # формируем одноэлементные наборы 
         items = [frozenset([item]) for item in self.database.fields]        

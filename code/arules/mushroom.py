@@ -99,11 +99,19 @@ if __name__ == "__main__":
     # db.print_as_set()
     
     # инициализируем и запускаем алгоритм Apriori
-    alg = apriori(db, 0.30, 0.50)
+    alg = apriori(db, 1.00, 0.80)
 
     alg.run(debug=True)
 
     # печатаем результаты
-    alg.print_itemsets()    
-    alg.print_support()
-    alg.print_rules()
+    # alg.print_itemsets()    
+    # alg.print_support()
+    # alg.print_rules()
+    print('itemset levels = ', len(alg.itemsets))
+    k = 0
+    s = 0
+    for item in alg.itemsets:
+        print(k, ' -> ', len(item))
+        k += 1
+        s += len(item)
+    print('itemsets = ', s)
