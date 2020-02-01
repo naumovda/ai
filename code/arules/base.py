@@ -1,36 +1,3 @@
-# class itemset:
-#     '''
-#     Элемент
-#         Атрибуты:
-#             items - множество элементов, входящих в набор
-#         Методы:
-#             support - поддержка набора в базе данных 
-#     '''
-#     def __init__(self, itemset=set()):
-#         self.itemset = itemset
-#         self.count = 0
-#         self.total = 0
-
-#     def add(self, value):
-#         self.itemset.add(value)
-
-#     def union(self, other):
-#         result = set()
-#         result.update(self)
-#         result.update(other)
-#         return result
-
-#     def support(self):
-#         if self.total == 0:
-#             return 0        
-#         return self.count/self.total
-
-#     def __eq__(self, value):
-#         return self.itemset == value.itemset
-
-#     def __str__(self):
-#         return f"set={self.itemset}, support={self.support()}"
-
 class transaction:
     '''
     Транзакция, имеющая идентификатор и содержащая набор элементов 
@@ -83,141 +50,142 @@ class database:
   
 def subsets(source):
     result = []
-    for item in source:
-        temp = source.copy()
-        temp.remove(item)
+    for item in list(source):
+        temp = source.difference(frozenset([item]))
         if temp != []:
             result.append(temp)
             for elem in subsets(temp):
                 if not elem in result:
-                    result.append(elem)             
+                    result.append(elem)
+    return result
+
+class rule:
+    def __init__(self, antecedent, consequent, support, confidence):
+        self.antecedent = antecedent
+        self.consequent = consequent
+        self.support = support
+        self.confidence = confidence  
+
+    def __str__(self):
+        return f"{list(self.antecedent)} => {list(self.consequent)}"
+
+def get_subsets(source):    
+    result = []
+    for item in list(source):
+        temp = source.difference(frozenset([item]))
+        if temp != []:
+            result.append(temp)
+            for elem in subsets(temp):
+                if elem != [] and not elem in result:
+                    result.append(elem)
     return result
 
 class apriori:
-    def __init__(self, min_support, min_confidence):
+    def __init__(self, database, min_support, min_confidence):
+        self.database = database
         self.min_support = min_support
         self.min_confidence = min_confidence
         self.itemsets = []
         self.support = {}
+        self.rules = []
 
     def filter(self, items, support):
         # формируем список наборов с поддержкой, большей min_support
         return [item for item in items if support[item] >= self.min_support]
 
-    def step_0(self, db):
+    def step_0(self):
         self.itemsets = []
-        self.support = {}
+        self.support = {frozenset():1}
+        self.rules = []        
         # формируем одноэлементные наборы 
-        items = [frozenset([item]) for item in db.fields]        
+        items = [frozenset([item]) for item in self.database.fields]        
         # рассчтываем поддержку одноэлементных наборов
-        db.calc_support(items, self.support)
+        self.database.calc_support(items, self.support)
         # добавляем в список
         self.itemsets.append(self.filter(items, self.support))
+        return self.itemsets[-1] != []
         
-    def step_k(self, db):
+    def step_k(self):
         if self.itemsets[-1] == []:
             return False
         items = []
-        for e1 in self.filter(self.itemsets[0], self.min_support):
+        for e1 in self.itemsets[0]:
             for e2 in self.itemsets[-1]:
-                if not e1.itemset <= e2.itemset:                    
+                if not e1 <= e2:                    
                     s = frozenset(e2.union(e1))  
                     if not s in items:
-                        items.append(e)
+                        items.append(s)
         # рассчтываем поддержку наборов
-        db.calc_support(items, self.support)
+        self.database.calc_support(items, self.support)
         # добавляем в список
         self.itemsets.append(self.filter(items, self.support))
         # возвращаем признак того, что можно продолжать
-        return self.itemsets[-1] != []:
+        return self.itemsets[-1] != []
 
-# class rule:
-#     def __init__(self, antecedent, consequent, support, confidence):
-#         self.antecedent = antecedent
-#         self.consequent = consequent
-#         self.support = support
-#         self.confidence = confidence   
+    def generate_rules(self):
+        # перебрать все наборы из itemsets, начиная с двухэлементых
+        for level in self.itemsets[1:]:
+            for itemset in level:
+                # генерируем все подмножества множества itemset
+                subsets = get_subsets(itemset)
+                # формируем посыл и следствие правила
+                for antecedent in subsets: 
+                    consequent = itemset.difference(antecedent)
+                    # рассчитать поддержку и достоверность
+                    rule_support = self.support[itemset]
+                    rule_confidence = rule_support / self.support[antecedent]
+                    # если достоверность больше пороговой, добавить в список
+                    if rule_confidence > self.min_confidence:
+                        self.rules.append(rule(antecedent, consequent, rule_support, rule_confidence))
+     
+    def run(self):
+        if self.step_0():
+            while self.step_k():
+                pass
+            self.generate_rules()
+
+    def print_itemsets(self):
+        k = 0
+        for level in self.itemsets:        
+            print('level', k)
+            for item in level:
+                print(list(item))
+            k += 1
+        print()
+
+    def print_support(self):
+        for key in alg.support.keys():
+            print(list(key), alg.support[key])
+
+    def print_rules(self):
+        for item in self.rules:
+            print(item, "supp = ", item.support, "conf = ", item.confidence)
    
 if __name__ == "__main__":
-    # загружаем файл данных
+    # инициализация объекта базы данных списком полей
     db = database(['A','B','C','D','E','F'])
     
+    # создаем транзакции
     t1 = transaction(0, frozenset(['A','B','C']))
     t2 = transaction(1, frozenset(['A','C']))
     t3 = transaction(2, frozenset(['A','D']))
     t4 = transaction(3, frozenset(['B','E','F']))
 
+    # добавляем транзакции в базу данных
     db.add_transaction(t1)
     db.add_transaction(t2)
     db.add_transaction(t3)
     db.add_transaction(t4)
 
+    # выводим базу данных
     db.print_as_set()
     db.print_as_boolean()
 
-    alg = apriori(0.40, 0.50)
-    alg.step_0(db)
-    for key in alg.support.keys():
-        print(list(key), alg.support[key])
+    # инициализируем и запускаем алгоритм Apriori
+    alg = apriori(db, 0.30, 0.50)
+    alg.run()
 
-    # while alg.step_k(db):
-    #     pass
-
-    # k = 0
-    # for level in alg.itemsets:        
-    #     print('level', k)
-    #     for item in level:
-    #         print(item)
-    #     k += 1
-    # db.load('mushroom_csv.csv')
-    
-    # формируем одноэлементные наборы 
-    # itemsetlist = []
-    # for item in universal:        
-    #     itemsetlist.append(itemset(set([item])))
-
-    # calc_support(itemsetlist, db)
-    
-    # c1 = []
-    # for item in itemsetlist:
-    #     if item.support() > min_support:
-    #         c1.append(item)
-
-    # itemsetlist = []
-    # for e1 in c1:
-    #     for e2 in c1:
-    #         if not e2.itemset <= e1.itemset:
-    #             s = set()
-    #             s.update(e1.itemset)
-    #             s.update(e2.itemset)
-    #             e = itemset(s)
-    #             itemsetlist.append(e)
-    
-    # calc_support(itemsetlist, db)
-    
-    # c2 = []
-    # for item in itemsetlist:
-    #     if item.support() > min_support:
-    #         c2.append(item)
-
-    # itemsetlist = []
-    # for e1 in c2:
-    #     for e2 in c1:
-    #         if not e2.itemset <= e1.itemset:
-    #             s = set()
-    #             s.update(e1.itemset)
-    #             s.update(e2.itemset)
-    #             e = itemset(s)
-    #             itemsetlist.append(e)
-    
-    # calc_support(itemsetlist, db)
-    
-    # c3 = []
-    # for item in itemsetlist:
-    #     if item.support() > min_support:
-    #         c3.append(item)
-
-    # for item in c3:
-    #     print_set(item.itemset)
-    #     print(item.support())
-    
+    # печатаем результаты
+    alg.print_itemsets()    
+    alg.print_support()
+    alg.print_rules()

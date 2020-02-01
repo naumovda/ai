@@ -14,18 +14,26 @@ def subsets(source):
                     result.append(elem)             
     return result
 
+def get_subsets(source):    
+    # source = frozenset()
+    result = []
+    for item in list(source):
+        temp = source.difference(frozenset([item]))
+        if temp != []:
+            result.append(temp)
+            for elem in get_subsets(temp):
+                if not elem in result:
+                    result.append(elem)
+    return result
+
 d = {}
 l1 = [1, 2, 3, 4, 5]
 s1 = frozenset(l1)
-
-print(s1)
-
 # d[s1] = 1
 # print(s1, d[s1])
-
 # z = {item: 0 for item in l1}
 # print(z)
-# print(subsets(s1))
+print(get_subsets(s1))
 
 # n =2**len(s1)
 
