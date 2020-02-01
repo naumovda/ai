@@ -7,7 +7,8 @@ class transaction:
         self.itemset = itemset
 
     def get_list(self, fields):
-        return sorted(list(self.itemset))
+        # return sorted(list(self.itemset))
+        return list(self.itemset)
 
     def get_boolean(self, fields):
         digit = lambda value: "1" if value in self.itemset else "0"
@@ -138,11 +139,18 @@ class apriori:
                     if rule_confidence > self.min_confidence:
                         self.rules.append(rule(antecedent, consequent, rule_support, rule_confidence))
      
-    def run(self):
+    def run(self, debug=False):
+        if debug:
+            print('Runnung Apriori:')        
         if self.step_0():
+            if debug:
+                print('.')
             while self.step_k():
-                pass
+                if debug:
+                    print('.')
             self.generate_rules()
+            if debug:
+                print('.done!')  
 
     def print_itemsets(self):
         k = 0
@@ -154,8 +162,8 @@ class apriori:
         print()
 
     def print_support(self):
-        for key in alg.support.keys():
-            print(list(key), alg.support[key])
+        for key in self.support.keys():
+            print(list(key), self.support[key])
 
     def print_rules(self):
         for item in self.rules:

@@ -71,7 +71,7 @@ class mushroom_database(database):
         k = 0
         for field in field_names:            
             title = f"{field}-{dicts[k][1][row[field]]}"            
-            s.append(indexes[title])
+            s.append(str(indexes[title]))
             k += 1
         return transaction(tid, frozenset(s))
 
@@ -79,7 +79,7 @@ class mushroom_database(database):
         with open(file_name, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             self.field_names = reader.fieldnames
-            self.fields = [key in sorted(names.keys())]
+            self.fields = [str(key) for key in sorted(names.keys())]
             self.items = []
             tid = 0       
             for row in reader:
@@ -96,4 +96,14 @@ if __name__ == "__main__":
     db = mushroom_database()
     db.load('mushroom_csv.csv')
 
-    db.print_as_boolean()    
+    # db.print_as_set()
+    
+    # инициализируем и запускаем алгоритм Apriori
+    alg = apriori(db, 0.30, 0.50)
+
+    alg.run(debug=True)
+
+    # печатаем результаты
+    alg.print_itemsets()    
+    alg.print_support()
+    alg.print_rules()
