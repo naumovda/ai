@@ -1,0 +1,4 @@
+Научная графика в Python
+Автор: Шабанов Павел Александрович
+
+https://nbviewer.jupyter.org/github/whitehorn/Scientific_graphics_in_python/tree/master/
