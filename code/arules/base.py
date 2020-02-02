@@ -168,6 +168,9 @@ class apriori:
     def print_rules(self):
         for item in self.rules:
             print(item, "supp = ", item.support, "conf = ", item.confidence)
+
+    def itemset_count(self):
+        return sum([len(item) for item in self.itemsets])
    
 if __name__ == "__main__":
     # инициализация объекта базы данных списком полей

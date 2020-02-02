@@ -88,30 +88,31 @@ class mushroom_database(database):
                 tid += 1
 
 if __name__ == "__main__":
-    # print(universal)
-    # print(indexes)
-    # print(names)
-
     # загружаем файл данных
     db = mushroom_database()
     db.load('mushroom_csv.csv')
-
-    # db.print_as_set()
     
     # инициализируем и запускаем алгоритм Apriori
-    alg = apriori(db, 1.00, 0.80)
+    alg = apriori(db, 0.50, 0.80)
+
+    # from timeit import Timer
+    # t = Timer(lambda: alg.run(debug=False))
+    # print ('Time  = ', t.timeit(number=1))
 
     alg.run(debug=True)
 
-    # печатаем результаты
+    # печатаем результаты    
     # alg.print_itemsets()    
     # alg.print_support()
     # alg.print_rules()
-    print('itemset levels = ', len(alg.itemsets))
-    k = 0
-    s = 0
-    for item in alg.itemsets:
-        print(k, ' -> ', len(item))
-        k += 1
-        s += len(item)
-    print('itemsets = ', s)
+
+    for level in alg.itemsets:
+        for i in level:
+            if alg.support[i] > 0.9:
+                print(list(i), alg.support[i])
+
+    # print('itemset levels = ', len(alg.itemsets))
+    # print('itemsets = ', alg.itemset_count())
+    # print(names[54])
+    # print(indexes['stalk-root-missing'])
+    # print(alg.support[frozenset(['54'])])
