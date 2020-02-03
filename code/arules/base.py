@@ -69,6 +69,11 @@ class rule:
 
     def __str__(self):
         return f"{list(self.antecedent)} => {list(self.consequent)}"
+    
+    def description(self, names):
+        ant = [names[item] for item in list(self.antecedent)]
+        cons = [names[item] for item in list(self.consequent)]
+        return f"{ant} => {cons}"
 
 def get_subsets(source):    
     result = []
@@ -138,6 +143,7 @@ class apriori:
                     # если достоверность больше пороговой, добавить в список
                     if rule_confidence > self.min_confidence:
                         self.rules.append(rule(antecedent, consequent, rule_support, rule_confidence))
+        self.rules.sort(key=lambda rule: rule.confidence)
      
     def run(self, debug=False):
         if debug:
@@ -163,11 +169,15 @@ class apriori:
 
     def print_support(self):
         for key in self.support.keys():
-            print(list(key), self.support[key])
+            print(list(key), f"{self.support[key]:.2}")
 
-    def print_rules(self):
-        for item in self.rules:
-            print(item, "supp = ", item.support, "conf = ", item.confidence)
+    def print_rules(self, top=0):
+        for item in self.rules[:top]:
+            print(item, f"supp = {item.support:.2} conf = {item.confidence:.2}")
+
+    def print_description(self, top=0, names={}):
+        for item in self.rules[:top]:
+            print(item.description(names), f"supp = {item.support:.2} conf = {item.confidence:.2}")
 
     def itemset_count(self):
         return sum([len(item) for item in self.itemsets])
