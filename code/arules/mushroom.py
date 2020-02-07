@@ -61,7 +61,7 @@ for d in dicts:
     elems = d[1]
     for item in sorted(elems.keys()):
         indexes[f"{name}-{elems[item]}"] = index
-        names[index] = f"{name}-{elems[item]}"
+        names[str(index)] = f"{name}-{elems[item]}"
         universal.append(index)
         index += 1
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     db.load('mushroom_csv.csv')
     
     # инициализируем и запускаем алгоритм Apriori
-    alg = apriori(db, 0.50, 0.80)
+    alg = apriori(db, 0.70, 0.80)
 
     # from timeit import Timer
     # t = Timer(lambda: alg.run(debug=False))
@@ -104,15 +104,8 @@ if __name__ == "__main__":
     # печатаем результаты    
     # alg.print_itemsets()    
     # alg.print_support()
-    # alg.print_rules()
-
-    for level in alg.itemsets:
-        for i in level:
-            if alg.support[i] > 0.9:
-                print(list(i), alg.support[i])
-
+    # alg.print_rules(top=40)
+    alg.print_description(top=5, names=names)
+    
     # print('itemset levels = ', len(alg.itemsets))
-    # print('itemsets = ', alg.itemset_count())
-    # print(names[54])
-    # print(indexes['stalk-root-missing'])
-    # print(alg.support[frozenset(['54'])])
+    # print('itemsets = ', alg.itemset_count())   
