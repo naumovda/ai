@@ -7,7 +7,6 @@ class transaction:
         self.itemset = itemset
 
     def get_list(self, fields):
-        # return sorted(list(self.itemset))
         return list(self.itemset)
 
     def get_boolean(self, fields):
@@ -169,7 +168,7 @@ class apriori:
 
     def print_support(self):
         for key in self.support.keys():
-            print(list(key), f"{self.support[key]:.2}")
+            print(list(key), f"{self.support[key]}")
 
     def print_rules(self, top=0):
         for item in self.rules[:top]:
@@ -209,4 +208,4 @@ if __name__ == "__main__":
     # печатаем результаты
     alg.print_itemsets()    
     alg.print_support()
-    alg.print_rules()
+    alg.print_rules(top=10)
