@@ -2,7 +2,8 @@ from nltk.tokenize import sent_tokenize, \
         word_tokenize, WordPunctTokenizer
 
 # Define input text
-input_text = "Do you know how tokenization works? It's actually quite interesting! Let's analyze a couple of sentences and figure it out." 
+# input_text = "Do you know how tokenization works? It's actually quite interesting! Let's analyze a couple of sentences and figure it out." 
+input_text = open('./anna.txt', 'r', encoding='utf-8').read()
 
 # Sentence tokenizer 
 print("\nSentence tokenizer:")
