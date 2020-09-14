@@ -208,9 +208,4 @@ if __name__ == "__main__":
     # печатаем результаты
     alg.print_itemsets()    
     alg.print_support()
-<<<<<<< HEAD
-
-    alg.print_rules(2)
-=======
     alg.print_rules(top=10)
->>>>>>> 5529a94e37a21d0e76baff14c66bc70211ac4f4d
