@@ -7,7 +7,6 @@ class transaction:
         self.itemset = itemset
 
     def get_list(self, fields):
-        # return sorted(list(self.itemset))
         return list(self.itemset)
 
     def get_boolean(self, fields):
@@ -31,9 +30,9 @@ class database:
         print()
 
     def print_as_boolean(self):
-        print("#", " ".join(self.fields))
+        print("#", *self.fields)
         for t in self.transactions:
-            print(t.tid, " ".join(t.get_boolean(self.fields)))
+            print(t.tid, *t.get_boolean(self.fields))
         print()
 
     def calc_support(self, itemsets, support):
@@ -101,7 +100,7 @@ class apriori:
 
     def step_0(self):
         self.itemsets = []
-        self.support = {frozenset():-1}
+        self.support = {frozenset():-1.0}
         self.rules = []        
         # формируем одноэлементные наборы 
         items = [frozenset([item]) for item in self.database.fields]        
@@ -209,4 +208,5 @@ if __name__ == "__main__":
     # печатаем результаты
     alg.print_itemsets()    
     alg.print_support()
-    alg.print_rules()
+
+    alg.print_rules(2)
