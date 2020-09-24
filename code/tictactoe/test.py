@@ -1,5 +1,11 @@
-s = [[None for _ in range(3)] for _ in range(3)]
+from xo import state_xo
+from minimax import bestmove
 
-print(s)
-s[1][0] = "X"
-print(s)
+if __name__ == "__main__":
+    s = state_xo()
+    level = 4
+    player, opponent = "X", state_xo.opponent["X"]    
+    
+    move = bestmove(s, level, player, opponent)
+
+    print(f"Best move is: ", move)
