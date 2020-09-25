@@ -63,10 +63,10 @@ def test03():
     s = state_xo()
     player, opponent = "X", state_xo.opponent["X"] 
 
-    lag = 1
-    x = np.arange(1, 8, lag)
+    depth = 6
+    x = np.arange(1, depth, 1)
     y = np.array([calc_nodes(s, level, player, opponent) for level in x])
-    fig = plt.figure()
+    _ = plt.figure()
     plt.plot(x, y)
     plt.title('Count of nodes')
     plt.ylabel('nodes')
@@ -76,4 +76,5 @@ def test03():
 
 if __name__ == "__main__":
     # test01()
+    # test02()
     test03()

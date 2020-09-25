@@ -57,7 +57,7 @@ def test03():
     lag = 1
     x = np.arange(1, 8, lag)
     y = np.array([calc_nodes(s, level, player, opponent) for level in x])
-    fig = plt.figure()
+    _ = plt.figure()
     plt.plot(x, y)
     plt.title('Count of nodes')
     plt.ylabel('nodes')
@@ -67,4 +67,5 @@ def test03():
 
 if __name__ == "__main__":
     # test01()
+    # test02()
     test03()
