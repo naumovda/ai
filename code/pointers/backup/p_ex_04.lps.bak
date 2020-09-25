@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="7">
+      <Unit0>
+        <Filename Value="p_ex_04.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="p_ex_03"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="27" Y="3"/>
+        <UsageCount Value="21"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\..\..\ds\examples\lec_09\circleunit.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="33"/>
+        <CursorPos X="23" Y="60"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\..\ds\examples\lec_09\pixelunit.pas"/>
+        <UnitName Value="Pixelunit"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="7"/>
+        <CursorPos X="24" Y="22"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\..\ds\examples\lec_09\project1.lpi"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="25" Y="6"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="XML"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\..\ds\examples\lec_09\project1.lpr"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="45" Y="8"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\..\ds\examples\lec_09\shapeunit.pas"/>
+        <UnitName Value="Shapeunit"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="26" Y="17"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\ds\examples\lec_09\rectangle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="rectangleunit"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="43"/>
+        <CursorPos X="23" Y="80"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit6>
+    </Units>
+    <JumpHistory HistoryIndex="-1"/>
+  </ProjectSession>
+</CONFIG>
