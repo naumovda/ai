@@ -19,3 +19,14 @@ def minimax (state, level, original, player, opponent):
 
 def bestmove(state, level, player, opponent):
     return minimax(state, level, player, player, opponent)
+
+if __name__ == "__main__":
+    from xo import state_xo
+
+    s = state_xo()
+    level = 6
+    player, opponent = "X", state_xo.opponent["X"]    
+    
+    move = bestmove(s, level, player, opponent)
+
+    print(f"Best move is: ", move)    

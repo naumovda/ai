@@ -21,14 +21,6 @@ class state_xo(state):
     def __str__(self):
         return str(self.value)
 
-    def get_moves(self, player):
-        moves = []
-        for row in range(3):
-            for col in range(3):
-                if self.value[row][col] == None:
-                    moves.append((row, col, player))
-        return moves
-
     def do_move(self, move):
         row, col, player = move
         self.value[row][col] = player        
@@ -45,6 +37,17 @@ class state_xo(state):
             if is_win:
                 return True
         return False  
+
+    def get_moves(self, player):
+        if self.is_win(player) or self.is_win(self.opponent[player]):
+            return []
+        
+        moves = []
+        for row in range(3):
+            for col in range(3):
+                if self.value[row][col] == None:
+                    moves.append((row, col, player))
+        return moves
 
     def nc(self, player):
         count = 0
