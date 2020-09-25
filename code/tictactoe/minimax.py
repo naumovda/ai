@@ -9,12 +9,14 @@ def minimax (state, level, original, player, opponent):
         state.do_move(m)
         _, score = minimax(state, level-1, original, opponent, player)
         state.undo_move(m)
+
         if player == original:
             if best_score == None or score > best_score:
                 best_move, best_score =  m, score
         else:
             if best_score == None or score < best_score:
                 best_move, best_score =  m, score
+
     return best_move, best_score
 
 def bestmove(state, level, player, opponent):
@@ -29,4 +31,5 @@ if __name__ == "__main__":
     
     move = bestmove(s, level, player, opponent)
 
-    print(f"Best move is: ", move)    
+    print(f"Best move is: ", move)   
+     

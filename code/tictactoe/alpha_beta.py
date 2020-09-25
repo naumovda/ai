@@ -1,4 +1,6 @@
-def negmax(state, level, player, opponent):
+from xo import state_xo
+
+def alpha_beta(state, level, player, opponent, low, high):
     best_move, best_score = None, None
     moves = state.get_moves(player)
 
@@ -7,22 +9,25 @@ def negmax(state, level, player, opponent):
 
     for m in moves:
         state.do_move(m)
-        _, score = negmax(state, level-1, opponent, player)
+        _, score = alpha_beta(state, level-1, opponent, player, -high, -low)
         state.undo_move(m)
 
-        if best_score == None or (-1)*score > best_score:
-            best_move, best_score =  m, (-1)*score
+        if best_score == None or -1*score > best_score:
+            low = -1*score
+            best_move, best_score =  m, -1*score
+
+        if low >= high:
+            return best_move, best_score        
 
     return best_move, best_score
 
 def bestmove(state, level, player, opponent):
-    return negmax(state, level, player, opponent)
+    return alpha_beta(state, level, player, opponent, \
+        -state_xo.infinity, state_xo.infinity)
 
 if __name__ == "__main__":
-    from xo import state_xo
-
     s = state_xo()
-    level = 6
+    level = 7
     player, opponent = "X", state_xo.opponent["X"]    
     
     move = bestmove(s, level, player, opponent)
