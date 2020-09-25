@@ -34,7 +34,16 @@ class state_xo(state):
 
     '''представления состояния в виде строки'''
     def __str__(self):
-        return str(self.value)
+        s = ""
+        for row in self.value:
+            for item in row:
+                if item == None:
+                    s += "[ ]"
+                else:
+                    s += f"[{item}]" 
+            s += '\n'
+        return s            
+        # return str(self.value)
 
     '''выполнение хода'''    
     def do_move(self, move):

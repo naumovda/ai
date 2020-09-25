@@ -96,7 +96,37 @@ def test03():
     plt.ylabel('nodes')
     plt.xlabel('negmax')
     plt.grid(True)
-    plt.show()      
+    plt.show() 
+
+def test_play():
+    from xo import state_xo
+
+    s = state_xo()
+    level = 4
+    player, opponent = "X", state_xo.opponent["X"]  
+    
+    print('start!')
+    
+    step = 1
+    while not (s.is_win(player) or s.is_win(opponent)):        
+        move, _ = bestmove(s, level, player, opponent)
+        if move == None:
+            print('finish... draw')
+            break        
+        print(f'Step {step}: {move}')
+        
+        s.do_move(move)
+        print(f'{s}')
+
+        if s.is_win(player):
+            print(f'Player {player} win!')
+            break
+        
+        step += 1
+        player, opponent = opponent, player
+    
+    print('the end')
 
 if __name__ == "__main__":
-    test03()
+    # test03()
+    test_play()
