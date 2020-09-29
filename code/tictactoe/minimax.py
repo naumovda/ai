@@ -48,21 +48,3 @@ def bestmove(state, level, player, opponent):
         - opponent - оппонент
     '''    
     return minimax(state, level, player, player, opponent)
-
-if __name__ == "__main__":
-    from xo import state_xo
-
-    # начальное состояние (пустое)
-    s = state_xo() 
-    
-    # на три хода (на шесть полуходов) вперед
-    level = 6 
-
-    # первым ходит "X", вторым - "0"
-    player, opponent = "X", state_xo.opponent["X"]    
-    
-    # получаем лучший ход
-    move = bestmove(s, level, player, opponent)
-
-    print(f"Best move is: ", move)   
-     
