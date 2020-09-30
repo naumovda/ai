@@ -1,7 +1,3 @@
-from timeit import Timer
-# from eight import state
-from eight_dict import state
-
 def bfs(initial, goal):
     """breadth search function
 
@@ -41,24 +37,21 @@ def bfs(initial, goal):
                 if m == goal:
                     # сформировать список ходов до текущего
                     path = [m]
-                    # d = m._depth - 1
-                    # idx = len(closed_states) - 1
-                    # # ищем крайний ход с нужной глубиной d
-                    # while idx > 0:
-                    #     if closed_states[idx]._depth == d:
-                    #         path.append(closed_states[idx])
-                    #         # уменьшаем глубину, начинаем искать предыдущий ход
-                    #         d -= 1 
-                    #     idx -= 1
-                    # path.append(initial)
-                    # path.reverse()                            
+                    s = m.parent
+                    while s:
+                        path.append(s)
+                        s = s.parent
+                    path.reverse()                            
                     return (True, path, len(open_states), len(closed_states))
                 open_states.append(m)
     return (False, [], -1, -1) # нет решения, возвращаем пустой список
 
 if __name__ == '__main__':
-    initial = state([[8,1,3],[2,4,5],[state.space,7,6]], 0)
-    goal = state([[1,2,3],[8,state.space,4],[7,6,5]])
+    from timeit import Timer
+    from eight import state
+
+    initial = state(None, [[8,1,3],[2,4,5],[state.space,7,6]], 0)
+    goal = state(None, [[1,2,3],[8,state.space,4],[7,6,5]])
 
     print(initial)
 

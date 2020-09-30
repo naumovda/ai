@@ -1,24 +1,14 @@
 from queue import PriorityQueue
-from eight_parent import state 
-from timeit import Timer
 
 # Fair Evaluator ::= P(h)
 #   P(h) - сумма манхеттенских расстояний между ячейками текущего состояния и целевым
 def fair_evaluator(state, goal):
-    size = state.size    
-    src = [(0,0) for i in range(size*size)]
-    dst = [(0,0) for i in range(size*size)]
-
-    for row in range(size):
-        for col in range(size):
-            src[state._data[row*size+col]] = (row, col)
-            dst[goal._data[row*size+col]] = (row, col)
-
-    dist = 0
-    for idx in range(1, len(src)):
-        dist += abs(src[idx][0]-dst[idx][0]) + abs(src[idx][1]-dst[idx][1])
-
-    return dist
+    sum = 0
+    for dice in range(1, state.size**2):
+        x1, y1 = state.places[state.data[dice]]
+        x2, y2 = state.places[goal.data[dice]]
+        sum += abs(x2-x1) + abs(y2-y1)
+    return sum       
 
 # Good Evaluator ::= P(h)+3*S(h)
 #   P(h) - сумма манхеттенских расстояний между всеми ячейками
@@ -28,60 +18,55 @@ def fair_evaluator(state, goal):
 #             1 - если это плитка в центре 
 def good_evaluator(state, goal):
     cells = [(0,1), (1, 2), (2, 5), (5, 8), (8, 7), (7, 6), (6, 3), (3, 0)]
+    anc = lambda x: 1 if x == 8 else x+1
+
     s = 0
-    for first, second in cells:
-        if state._data[first] == 8:
-            if state._data[second] != 1:
-                s += 2
-        elif state._data[first] != 0:
-            if state._data[first] + 1 != state._data[second]:
-                s += 2
-    if state._data[4] != state.space:
+    # для каждой кости
+    for dice in range(1, state.size**2):
+        if not (state.data[dice], state.data[anc(dice)]) in cells: 
+            s += 2        
+    if state.data[state.space] != 4: 
         s += 1
-    return fair_evaluator(state, goal) + 3*s
+    return s*3 + fair_evaluator(state, goal)
 
 # Weak Evaluator ::= N(h)
 #   N(h) - количество плиток не на своем месте
 def weak_evaluator(state, goal):
-    count = 0
-    for k in range(len(state._data)):
-        if state._data[k] != goal._data[k] and state._data[k] != 0:
-            count += 1
-    return count 
+    # count = 0
+    # for dice in range(1, state.size**2):
+    #     if state.data[dice] != goal.data[dice]: 
+    #         count += 1
+    # return count
+    return sum([1 for dice in range(1, state.size**2) if state.data[dice] != goal.data[dice]]) 
 
 # Bad Evaluator ::= |D(h) - 16|
-#   D(h) - сумма разностей значений противоположных (относительно центра) плиток для текущего состояния
-#   G(h) - сумма разностей значений противоположных (относительно центра) плиток для целевого состояния      
+#   D(h) - сумма разностей значений противоположных (относительно центра) плиток 
+#          для текущего состояния
+#   G(h) - сумма разностей значений противоположных (относительно центра) плиток 
+#          для целевого состояния     
 def bad_evaluator(state, goal):
-    d = state._data[3] - state._data[5] \
-        + state._data[6] - state._data[2] \
-        + state._data[7] - state._data[1] \
-        + state._data[8] - state._data[0]
-    g = goal._data[3] - goal._data[5] \
-        + goal._data[6] - goal._data[2] \
-        + goal._data[7] - goal._data[1] \
-        + goal._data[8] - goal._data[0]
-    # print(d)
-    # print(g)
-    # sumDistance += node.cell(1, 0) - node.cell(1, 2); 3 - 5
-	# sumDistance += node.cell(2, 0) - node.cell(0, 2); 6 - 2
-	# sumDistance += node.cell(2, 1) - node.cell(0, 1); 7 - 1
-	# sumDistance += node.cell(2, 2) - node.cell(0, 0); 8 - 0
-    return abs(d-g)
+    f = lambda d: d[3]+d[6]+d[7]+d[8]-d[5]-d[2]-d[1]-d[0] 
+    d = [0 for _ in range(state.size**2)]
+    for dice in range(1, state.size**2):
+        d[state.data[dice]] = dice 
+    print(d)
+    g = [goal.data[dice]  for dice in range(0, state.size**2)]
+    print(g)
+    return abs(f(d)-f(g))
 
 def a_search(initial, goal, evaluator):
     """A*search algorythm function
 
     Keyword arguments:
-    initial -- inital state, start of the search tree
-    goal -- final state, we want to find path
-    evaluator -- a function to calculate priority for queue
+        initial -- inital state, start of the search tree
+        goal -- final state, we want to find path
+        evaluator -- a function to calculate priority for queue
 
     Return: a dict (solved, path, open state count, close_state_count)
-    is_find -- does path has been found
-    path -- a path to final state, a solution 
-    open_state_count -- count of elements in open states list
-    close_state_count -- count of elements in close states list
+        is_find -- does path has been found
+        path -- a path to final state, a solution 
+        open_state_count -- count of elements in open states list
+        close_state_count -- count of elements in close states list
     """
     if initial == goal: # начальное состояние равно целевому
         return {'solved':True, 'path': [initial], 'openstates':1, 'closedstates':0}
@@ -97,9 +82,7 @@ def a_search(initial, goal, evaluator):
 
     while not open_states.empty():
         # извлекаем первый элемент из (очереди) списка открытых состояний
-        value, current = open_states.get()
-
-        print(current, ' v = ', value, 'd = ', current._depth)
+        _, current = open_states.get()
 
         # добавляем его в закрытые
         closed_states.add(current)
@@ -142,31 +125,20 @@ def a_search(initial, goal, evaluator):
         }
 
 if __name__ == '__main__':
-    # initial = state(None, [2,1,6,4,0,8,7,5,3], 4, 0)
-    # initial = state(None, [1,4,8,7,3,0,6,5,2], 5, 0)
-    initial = state(None, [8,1,3,0,4,5,2,7,6], 3, 0)
-    goal = state(None, [1,2,3,8,0,4,7,6,5], 4)
+    from eight import state 
+    from timeit import Timer
 
-    # 1,4,8
-    # 7,3,0
-    # 6,5,2
-    # 1 +2
-    # 4 +2
-    # 8 +0
-    # 
+    initial = state(None, [8,1,3,0,4,5,2,7,6])   
+    goal = state(None, [1,2,3,8,0,4,7,6,5])
 
     print('fair =', fair_evaluator(initial, goal))
     print('good =', good_evaluator(initial, goal))    
     print('weak =', weak_evaluator(initial, goal))
     print('bad  =', bad_evaluator(initial, goal))
 
-    # fair_evaluator
-    # good_evaluator
-    # weak_evaluator
-    # bad_evaluator
-    # f = lambda: a_search(initial, goal, fair_evaluator)
+    f = lambda: a_search(initial, goal, fair_evaluator)
     # f = lambda: a_search(initial, goal, good_evaluator)
-    f = lambda: a_search(initial, goal, weak_evaluator)
+    # f = lambda: a_search(initial, goal, weak_evaluator)
     # f = lambda: a_search(initial, goal, bad_evaluator)
 
     res = f()        
@@ -177,5 +149,5 @@ if __name__ == '__main__':
     for m in res['path']:
         print(m)
         
-    t = Timer(f)
-    print("Time = ", t.timeit(number=1))
+    # t = Timer(f)
+    # print("Time = ", t.timeit(number=1))
