@@ -1,35 +1,44 @@
 Литература и ресурсы
 1. Stottler Henke. История ИИ. (History of AI, 2002). Доступно по адресу http://
 www.shai.com/ai_general/history.htm.
+
 2. Вагман М. Процессы научных открытий для людей и компьютеров: теория
 и исследование по психологии и искусственному разуму (Wagman M.
 Scientific Discovery Processes in Humans and Computers: Theory and Research
 in Psychology and Artificial Intelligence. – Westport, Conn.: Praeger Publishers,
 2000).
+
 3. Кантровиц М. Часто задаваемые вопросы по ИИ (Kantrowitz M. The AI
 Frequently Asked Questions, 2002). При поддержке Рика Крэбба (Ric Crabbe)
 и Амита Дюби (Amit Dubey). Доступно по адресу http://www.faqs.org/faqs/
 aifaq/general.
+
 4. Кревье Д. ИИ: история поиска искусственного разума (Crevier D. AI: The
 Tumultuous History of the Search for Artificial Intelligence. – New York: Basic
 Books, 1993).
+
 5. Курзвэйл Р. Век спиритических машин: когда компьютеры превосходят лю
 дей по разуму (Kurzweil R. The Age of Spiritual Machines: When Computers
 Exceed Human Intelligence. – New York: Viking, 1999).
+
 6. МакКарти Дж. (McCarthy J.). Webсайт Стэндфордского университета,
 http://wwwformal.stanford.edu/jmc.
 7. МакКарти Дж. Артур Самуэль: пионер в обучении машин (McCarthy J.
 Arthur Samuel, Pioneer in Machine Learning). Доступно по адресу http://
 wwwdb.stanford.edu/pub/voy/museum/samuel.html.
+
 8. МакКарти Дж., Мински М., Рочестер Н., Шэннон С. Е. Предложение для
 Дортмуртского исследовательского проекта по проблеме искусственного ра
 зума (McCarty J., Minsky M., Rochester N., Shannon C. E. A Proposal for the
 Darmouth Research Project on Artificial Intelligence, 1955). Доступно по ад
 ресу http://www.formal.stanford.edu/jmc/history/dartmouth/dartmouth.html.
+
 9. Мински М. (Minsky M). Webсайт MIT, http://web.media.mit.edu/~minsky.
+
 10. Мински М., Паперт С. Перцептроны: введение в вычислительную геомет
 рию (Minsky M., Papert S. Perceptrons: An Introduction to Computational
 Geometry. – Cambridge, Mass.: MIT Press, 1969).
+
 11. Тауб М. Компьютеры и здравый смысл: миф о мыслящих машинах (Taube
 M. Computers and Common Sense: The Myth of Thinking Machines, Columbia
 University Press, 1961).

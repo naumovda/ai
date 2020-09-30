@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="C:\lazarus\fpc\3.0.0\bin\x86_64-win64\fpc.exe" Date="1213098656"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -l -vewnhibq -FiE:\git\ai\code\pointers\lib\x86_64-win64 -FuE:\git\ds\examples\lec_09 -FuE:\git\ai\code\pointers\ -FUE:\git\ai\code\pointers\lib\x86_64-win64\ p_ex_04.lpr"/>
-  <Complete Value="False"/>
-</CONFIG>
