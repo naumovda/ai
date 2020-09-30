@@ -1,4 +1,6 @@
-class state:
+from base import base_state
+
+class state(base_state):
     space = 0 # код для обозначения пустого поля
     size = 3
     
@@ -49,25 +51,77 @@ class state:
         return k
 
     def __str__(self):
-        s = ""
-        l = [[0,0,0],[0,0,0],[0,0,0]]
+        field = [[0,0,0],[0,0,0],[0,0,0]]        
         for key, item in self.data.items():
             row, col = self.places[item]
-            l[row][col] = key
-        for row in l:
-            s += f"{row}"            
-        return s
+            field[row][col] = key
+        return str(field)
     
     def __eq__(self, other):
         return self.data == other.data
 
     def get_moves(self):
-        d = self.data # для сокращения записи 
+        d = self.data 
         new_moves = []
-        for position in self.moves[d[0]]: # получаем список ходов для пустого поля
+        # получаем список ходов для пустого поля:
+        for position in self.moves[d[0]]: 
             key = state.get_key(d, position)
             new_state = d.copy()
             new_state[0] = d[key] 
             new_state[key] = d[0]
             new_moves.append(state(self, new_state, self.depth+1))
         return new_moves
+
+# Fair Evaluator ::= P(h)
+#   P(h) - сумма манхеттенских расстояний между ячейками текущего состояния и целевым
+def fair_evaluator(state, goal):
+    sum = 0
+    for dice in range(1, state.size**2):
+        x1, y1 = state.places[state.data[dice]]
+        x2, y2 = state.places[goal.data[dice]]
+        sum += abs(x2-x1) + abs(y2-y1)
+    return sum       
+
+# Good Evaluator ::= P(h)+3*S(h)
+#   P(h) - сумма манхеттенских расстояний между всеми ячейками
+#   S(h) - для каждой плитки, 
+#             0 - если за ней идет корректный приемник
+#             2 - в противном случае 
+#             1 - если это плитка в центре 
+def good_evaluator(state, goal):
+    cells = [(0,1), (1, 2), (2, 5), (5, 8), (8, 7), (7, 6), (6, 3), (3, 0)]
+    anc = lambda x: 1 if x == 8 else x+1
+
+    s = 0
+    # для каждой кости
+    for dice in range(1, state.size**2):
+        if not (state.data[dice], state.data[anc(dice)]) in cells: 
+            s += 2        
+    if state.data[state.space] != 4: 
+        s += 1
+    return s*3 + fair_evaluator(state, goal)
+
+# Weak Evaluator ::= N(h)
+#   N(h) - количество плиток не на своем месте
+def weak_evaluator(state, goal):
+    # count = 0
+    # for dice in range(1, state.size**2):
+    #     if state.data[dice] != goal.data[dice]: 
+    #         count += 1
+    # return count
+    return sum([1 for dice in range(1, state.size**2) if state.data[dice] != goal.data[dice]]) 
+
+# Bad Evaluator ::= |D(h) - 16|
+#   D(h) - сумма разностей значений противоположных (относительно центра) плиток 
+#          для текущего состояния
+#   G(h) - сумма разностей значений противоположных (относительно центра) плиток 
+#          для целевого состояния     
+def bad_evaluator(state, goal):
+    f = lambda d: d[3]+d[6]+d[7]+d[8]-d[5]-d[2]-d[1]-d[0] 
+    d = [0 for _ in range(state.size**2)]
+    for dice in range(1, state.size**2):
+        d[state.data[dice]] = dice 
+    print(d)
+    g = [goal.data[dice]  for dice in range(0, state.size**2)]
+    print(g)
+    return abs(f(d)-f(g))
