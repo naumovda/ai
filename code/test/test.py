@@ -2,7 +2,7 @@ edges = [
     ((1,2),(1,4)), 
     ((1,6),(1,8)), 
     ((3,0),(3,2)),
-    # ((1,4),(1,6)),
+    ((1,4),(1,6)),
     ((1,2),(3,2))
     ]
 
@@ -40,12 +40,28 @@ for e in edges:
 
 print(clusters)
 
-# score = 3
+def m(s, idx, fun):
+    return fun(item[idx] for item in s)
+
+def l(s):
+    min_x = m(clusters[0], 0, min)
+    max_x = m(clusters[0], 0, max)
+    min_y = m(clusters[0], 1, min)
+    max_y = m(clusters[0], 1, max)
+    return min([9+min_x-max_x, 9+min_y-max_y])
+
+def score_p(clusters):
+    return min([l(cluster) for cluster in clusters])
+
+for c in clusters:
+    print(f"cluster = {c}")
+
+print(f"score_p = {score_p(clusters)}")
 
 #  0123456789
 # 0---------- 
 # 1--*******-
-# 2----------
+# 2--*-------
 # 3***-------
 # 4----------
 # 5----------
