@@ -13,6 +13,9 @@ class Cell:
         else:
             return " "*3
 
+    def weight(self):
+        return 0
+
 class RightCell():
     def __init__(self, value):    
         if value is Cell:
@@ -28,6 +31,9 @@ class RightCell():
         else:
             return "***"
 
+    def weight(self):
+        return 1 
+
 class TopCell():
     def __init__(self, value):    
         if value is Cell:
@@ -42,6 +48,9 @@ class TopCell():
             return f"*{self.value}*"
         else:
             return "* *"
+    
+    def weight(self):
+        return 2   
 
 class LeftCell():
     def __init__(self, value):    
@@ -58,6 +67,9 @@ class LeftCell():
         else:
             return "***"
 
+    def weight(self):
+        return 3
+
 class BottomCell():
     def __init__(self, value):    
         if value is Cell:
@@ -73,6 +85,9 @@ class BottomCell():
         else:
             return "***"
 
+    def weight(self):
+        return 4
+
 def get_cell_types(r1, c1, r2, c2):
     if c1 < c2:
         return [LeftCell, RightCell]
@@ -84,23 +99,38 @@ def get_cell_types(r1, c1, r2, c2):
         return [BottomCell, TopCell]
 
 class state:
+    # board = [
+    #     [1, 0, 0, 0, 0],
+    #     [3, 1, 2, 2, 3],
+    #     [2, 3, 0, 2, 1],
+    #     [2, 3, 1, 3, 1]
+    # ]
+    # all_dices = [
+    #     (0, 0), (0, 1), (0, 2), (0, 3), 
+    #     (1, 1), (1, 2), (1, 3),
+    #     (2, 2), (2, 3),
+    #     (3, 3)
+    # ]
+    # rows = 4
+    # cols = 5
+
     board = [
-        [1, 0, 0, 0, 0],
-        [3, 1, 2, 2, 3],
-        [2, 3, 0, 2, 1],
-        [2, 3, 1, 3, 1]
+        [0, 0, 0, 1],
+        [0, 2, 2, 1],
+        [1, 2, 2, 1]
     ]
     all_dices = [
-        (0, 0), (0, 1), (0, 2), (0, 3), 
-        (1, 1), (1, 2), (1, 3),
-        (2, 2), (2, 3),
-        (3, 3)
+        (0, 0), (0, 1), (0, 2),
+        (1, 1), (1, 2), 
+        (2, 2)
     ]
-    rows = 4
-    cols = 5
+    rows = 3
+    cols = 4
 
-    def __init__(self, dice_places):
+    def __init__(self, parent, dice_places, depth):
+        self.parent = parent
         self.dice_places = dice_places
+        self.depth = depth        
         self.cells = []
         self.all_dices = state.all_dices.copy()
 
@@ -121,6 +151,14 @@ class state:
             v2 = max(state.board[r1][c1], state.board[r2][c2])
             self.all_dices.remove((v1, v2))
 
+    def __hash__(self):
+        d = 0
+        for row in self.cells:
+            for cell in row:
+                d *= 10
+                d += cell.weight()
+        return d
+
     def __str__(self):
         s = ''
         for row in self.cells:
@@ -129,6 +167,12 @@ class state:
                     s += cell.get_str(line)
                 s += "\n"
         return s
+
+    def __lt__(self, other):
+        return self.__hash__() < other.__hash__()
+
+    def __eq__(self, other):
+        return self.__hash__() == other.__hash__()
 
     def print(self):
         for row in self.cells:
@@ -160,13 +204,13 @@ class state:
                 if self.is_dice_exist(v1, v2):
                     dp = self.dice_places.copy()
                     dp.append((r1, c1, r2, c2))
-                    return state(dp)
-
+                    return state(self, dp, self.depth+1)
         return None
 
     def append_move(self, moves, move):
         if move:
-            moves.append(move)
+            if not move in moves:
+                moves.append(move)
 
     def get_moves(self):
         moves = []
@@ -179,12 +223,34 @@ class state:
                     self.append_move(moves, self.get_move(row, col, row, col+1))
         return moves
 
+    def score(self):
+        return sum([1 for v1, v2 in self.all_dices if v1==v2])
+
+def goal(state):
+    for row in state.cells:
+        for cell in row:
+            if cell.weight() == 0:
+                return False
+    return True
+
+def evaluator(state, goal):
+   return sum([1 for v1, v2 in state.all_dices if v1==v2])
+
 if __name__ == "__main__":
-    s = state([(0, 0, 1, 0), (0, 4, 0, 3)])
+    s = state(None, [(0, 0, 1, 0), (0, 4, 0, 3)], 0)
     
     s.print()
     print('---')
     moves = s.get_moves()
+    moves.sort()
     for move in moves:
         print(move)
+        print(f's = {move.score()}')
+        print(f's = {move.__hash__()}')        
         print('---')
+
+    print(len(moves))
+    # h = [m.__hash__() for m in moves]
+    # h.sort()
+
+    # print(h)
