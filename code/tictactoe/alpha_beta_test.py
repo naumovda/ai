@@ -12,24 +12,24 @@ def calc_nodes(state, level, player, opponent):
     _ = bestmove(state, level, player, opponent)
     return nodes 
      
-def test_count():
-    from xo import state_xo 
-    import numpy as np
-    import matplotlib.pyplot as plt
+# def test_count():
+#     from xo import state_xo 
+#     import numpy as np
+#     import matplotlib.pyplot as plt
 
-    s = state_xo()
-    player, opponent = "X", state_xo.opponent["X"] 
+#     s = state_xo()
+#     player, opponent = "X", state_xo.opponent["X"] 
 
-    lag = 1
-    x = np.arange(1, 8, lag)
-    y = np.array([calc_nodes(s, level, player, opponent) for level in x])
-    _ = plt.figure()
-    plt.plot(x, y)
-    plt.title('Count of nodes')
-    plt.ylabel('nodes')
-    plt.xlabel('negmax')
-    plt.grid(True)
-    plt.show() 
+#     lag = 1
+#     x = np.arange(1, 8, lag)
+#     y = np.array([calc_nodes(s, level, player, opponent) for level in x])
+#     _ = plt.figure()
+#     plt.plot(x, y)
+#     plt.title('Count of nodes')
+#     plt.ylabel('nodes')
+#     plt.xlabel('negmax')
+#     plt.grid(True)
+#     plt.show() 
 
 def test_play():
     from xo import state_xo
@@ -61,5 +61,5 @@ def test_play():
     print('the end')
 
 if __name__ == "__main__":
-    test_count()
+    # test_count()
     test_play()

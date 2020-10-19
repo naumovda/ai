@@ -99,31 +99,70 @@ class state:
     rows = 4
     cols = 5
 
-    def __init__(self, dice_places):
-        self.dice_places = dice_places
-        self.cells = []
-        self.all_dices = state.all_dices.copy()
+    LEFT = 0
+    RIGHT = 1
+    TOP = 2
+    BOTTOM = 3
 
+    def __init__(self, dices=None):
+        # dice is a dict like this:
+        # {
+        #   (0, 0): (1, 2, True), 
+        #   (0, 1): None
+        #   ...
+        # 
+        # }
+        # dice: dice place (row, col, direction)
+        # direction: L, R, T, B
+        if dices is None:
+            self.dices = {dice: (None, None, None) for dice in state.all_dices}
+        else:
+            self.dices = dices
+
+    @staticmethod
+    def get_cell(r, c, direction):
+        if direction == state.TOP:
+            return r-1, c
+        elif direction == state.BOTTOM:
+            return r+1, c
+        elif direction == state.LEFT:
+            return r, c-1
+        else:
+            return r, c+1
+
+    @staticmethod
+    def get_direction(r1, c1, r2, c2):
+        if r1 < r2:
+            return state.BOTTOM
+        elif r2 > r1:
+            return state.TOP
+        elif c1 < c2:
+            return state.RIGHT
+        else:
+            return state.LEFT
+
+    def get_cells(self):
+        cells = []
         for row in range(state.rows):
             cell_row = []
             for col in range(state.cols):
                 c = Cell(state.board[row][col])
                 cell_row.append(c)
-            self.cells.append(cell_row)
+            cells.append(cell_row)
 
-        for place in self.dice_places:
-            r1, c1, r2, c2 = place
-            types = get_cell_types(r1, c1, r2, c2)            
-            self.cells[r1][c1] = types[0](state.board[r1][c1])
-            self.cells[r2][c2] = types[1](state.board[r2][c2])
+        for r1, c1, direction in self.dices.values():
+            if direction:
+                r2, c2 = self.get_cell(r1, c1, direction) 
+                types = get_cell_types(r1, c1, r2, c2)            
+                cells[r1][c1] = types[0](state.board[r1][c1])
+                cells[r2][c2] = types[1](state.board[r2][c2])
 
-            v1 = min(state.board[r1][c1], state.board[r2][c2])
-            v2 = max(state.board[r1][c1], state.board[r2][c2])
-            self.all_dices.remove((v1, v2))
+        return cells
 
     def __str__(self):
+        cells = self.get_cells()
         s = ''
-        for row in self.cells:
+        for row in cells:
             for line in range(3):
                 for cell in row:
                     s += cell.get_str(line)
@@ -131,7 +170,8 @@ class state:
         return s
 
     def print(self):
-        for row in self.cells:
+        cells = self.get_cells()
+        for row in cells:
             for line in range(3):
                 s = ''
                 for cell in row:
@@ -139,7 +179,11 @@ class state:
                 print(s)
 
     def is_a_free_cell(self, row, col):
-        return isinstance(self.cells[row][col], Cell)
+        if (row, col) in [(r, c) for (r, c, _) in self.dices.values()]:
+            return False
+        if (row, col) in [self.get_cell(r, c, d) for r, c, d in self.dices.values()]:
+            return False
+        return True
 
     def is_exist(self, row, col):
         if row < 0 or row >= state.rows:
@@ -150,18 +194,17 @@ class state:
 
     def is_dice_exist(self, v1, v2):
         v1, v2 = min(v1, v2), max(v1, v2)
-        return (v1, v2) in self.all_dices
+        return self.dices[(v1, v2)] is None
 
-    def get_move(self, r1, c1, r2, c2):
-        v1 = self.board[r1][c1]
+    def get_move(self, r1, c1, r2, c2):        
         if self.is_exist(r2, c2):
+            v1 = self.board[r1][c1]
             v2 = self.board[r2][c2]            
             if self.is_a_free_cell(r2, c2):
-                if self.is_dice_exist(v1, v2):
-                    dp = self.dice_places.copy()
-                    dp.append((r1, c1, r2, c2))
+                if self.is_dice_exist(v1, v2):                    
+                    dp = self.dices.copy()
+                    dp[(v1, v2)] = r1, c1, state.get_direction(r1, c1, r2, c2)
                     return state(dp)
-
         return None
 
     def append_move(self, moves, move):
@@ -180,10 +223,11 @@ class state:
         return moves
 
 if __name__ == "__main__":
-    s = state([])
+    s = state()
     
     s.print()
     print('---')
+
     moves = s.get_moves()
     for move in moves:
         print(move)
