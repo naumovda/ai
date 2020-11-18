@@ -2,8 +2,8 @@ from eight import state
 from bfs import *
 from timeit import Timer
 
-initial = state(None, [[8,1,3],[2,4,5],[state.space,7,6]], 0)
-goal = state(None, [[1,2,3],[8,state.space,4],[7,6,5]])
+initial = state(None, [8,1,3,2,4,5,state.space,7,6], 0)
+goal = state(None, [1,2,3,8,state.space,4,7,6,5])
 
 print(initial)
 
