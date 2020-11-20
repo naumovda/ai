@@ -2,7 +2,7 @@ from eight import state, fair_evaluator, good_evaluator, weak_evaluator, bad_eva
 from asearch import a_search
 from timeit import Timer
 
-initial = state(None, [8,1,3,0,4,5,2,7,6])   
+initial = state(None, [8,1,3,0,4,5,2,7,6], 0)   
 goal = state(None, [1,2,3,8,0,4,7,6,5])
 
 print('fair =', fair_evaluator(initial, goal))
