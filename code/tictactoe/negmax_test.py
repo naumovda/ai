@@ -1,4 +1,4 @@
-from negmax import *
+from negmax import bestmove
 
 def calc_nodes(state, level, player, opponent):
     ''' Расчет количества сгенерированных узлов
@@ -7,10 +7,10 @@ def calc_nodes(state, level, player, opponent):
         - player - игрок
         - opponent - оппонент
     '''    
-    global nodes 
-    nodes = 0 # обнуляем статистику 
+    # global nodes 
+    # nodes = 0 # обнуляем статистику 
     # вызываем метод NegMax
-    _ = bestmove(state, level, player, opponent)
+    _, _, nodes = bestmove(state, level, player, opponent)
     return nodes
 
 def test_bestmove():
@@ -23,11 +23,8 @@ def test_bestmove():
     # первым ходит "X", вторым - "0"
     player, opponent = "X", state_xo.opponent["X"]  
     
-    # обнуляем статистику
-    nodes = 0
-
     # получаем лучший ход
-    move = bestmove(s, level, player, opponent)
+    move, _, nodes = bestmove(s, level, player, opponent)
     
     print(f"Best move is: {move}")    
     print(f"Node count {nodes}")

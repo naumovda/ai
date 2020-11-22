@@ -7,9 +7,7 @@ def calc_nodes(state, level, player, opponent):
         - player - игрок
         - opponent - оппонент
     '''     
-    global nodes 
-    nodes = 0    
-    _ = bestmove(state, level, player, opponent)
+    _, _, nodes = bestmove(state, level, player, opponent)
     return nodes 
      
 # def test_count():
@@ -20,6 +18,18 @@ def calc_nodes(state, level, player, opponent):
 #     s = state_xo()
 #     player, opponent = "X", state_xo.opponent["X"] 
 
+<<<<<<< HEAD
+    lag = 1
+    x = np.arange(1, 8, lag)
+    y = np.array([calc_nodes(s, level, player, opponent) for level in x])
+    _ = plt.figure()
+    plt.plot(x, y)
+    plt.title('Count of nodes')
+    plt.ylabel('nodes')
+    plt.xlabel('alpha-beta')
+    plt.grid(True)
+    plt.show() 
+=======
 #     lag = 1
 #     x = np.arange(1, 8, lag)
 #     y = np.array([calc_nodes(s, level, player, opponent) for level in x])
@@ -30,6 +40,7 @@ def calc_nodes(state, level, player, opponent):
 #     plt.xlabel('negmax')
 #     plt.grid(True)
 #     plt.show() 
+>>>>>>> 5223e6cb83678436cda238bd4f0a1aef8ea2c335
 
 def test_play():
     from xo import state_xo
@@ -42,7 +53,7 @@ def test_play():
     
     step = 1
     while not (s.is_win(player) or s.is_win(opponent)):        
-        move, _ = bestmove(s, level, player, opponent)
+        move, _, _ = bestmove(s, level, player, opponent)
         if move == None:
             print('finish... draw')
             break        
@@ -61,5 +72,10 @@ def test_play():
     print('the end')
 
 if __name__ == "__main__":
+<<<<<<< HEAD
+    test_count()
+    # test_play()
+=======
     # test_count()
     test_play()
+>>>>>>> 5223e6cb83678436cda238bd4f0a1aef8ea2c335

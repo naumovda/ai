@@ -94,6 +94,15 @@ field = [
     ['0', '0', 'W', '0', '0']
 ]
 
+# [
+#     ((4, 2), 'W', '0', False),
+#     ((3, 1), 'B', '0', False),
+#     ((2, 0), '0', 'W', True),
+#     ((2, 0), 'W', '0', False),
+#     ((1, 1), 'B', '0', False),
+#     ((0, 2), '0', 'W', True),
+# ]
+
 for move in get_moves(field, (4, 2)):
     new_field = do_move(field, move)
     print('-'*40)

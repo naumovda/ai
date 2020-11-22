@@ -1,9 +1,6 @@
 from xo import state_xo
 
-# количество узлов для расчета статистики
-nodes = 0
-
-def alpha_beta(state, level, player, opponent, low, high):
+def alpha_beta(state, level, player, opponent, low, high, nodes):
     ''' Алгоритм AlphaBeta-отсечения (на основе negmax)
         - state - начальное состояние
         - level - максимальная глубина рекрсии (количество полуходов)
@@ -20,14 +17,13 @@ def alpha_beta(state, level, player, opponent, low, high):
     moves = state.get_moves(player)
 
     # накапливаем количество сгенерированных ходов
-    global nodes 
     nodes += len(moves)
 
     # если достигнута максимальная глубина дерева
     # или ходов нет, то рассчитываем оценку
     # при помощи оценочной функции
     if level == 0 or moves == []:
-        return None, state.score(player)
+        return None, state.score(player), nodes
 
     # перебираем последовательно все возможные ходы
     for m in moves:
@@ -37,7 +33,7 @@ def alpha_beta(state, level, player, opponent, low, high):
         # вызываем рекурсивно NegMax,
         # уменьшая уровень на 1
         # и меняя местами игрока и оппонента          
-        _, score = alpha_beta(state, level-1, opponent, player, -high, -low)
+        _, score, nodes = alpha_beta(state, level-1, opponent, player, -high, -low, nodes)
 
         # отменяем ход
         state.undo_move(m)
@@ -51,9 +47,9 @@ def alpha_beta(state, level, player, opponent, low, high):
 
         # если выполняется условие для AlphaBeta-отсечения
         if low >= high:
-            return best_move, best_score        
+            return best_move, best_score, nodes     
 
-    return best_move, best_score  
+    return best_move, best_score, nodes 
 
 def bestmove(state, level, player, opponent):
     ''' Вызов функции AlphaBet с начальными значениями
@@ -64,5 +60,6 @@ def bestmove(state, level, player, opponent):
         - low = -infinity
         - high = +infinity
     '''     
+    nodes = 0
     return alpha_beta(state, level, player, opponent, \
-        -state_xo.infinity, state_xo.infinity)  
+        -state_xo.infinity, state_xo.infinity, nodes)  
