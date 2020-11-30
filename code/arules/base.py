@@ -7,7 +7,7 @@ class Transaction:
 
     def __init__(self, tid, itemset):
         '''Init transaction object
-        
+
         tid -- identifier
         itemset -- itemset of transaction
         '''
@@ -45,16 +45,16 @@ class Database:
     def print_as_set(self):
         '''Print all transactions as set'''
 
-        for t in self.transactions:
-            print(t.tid, " ".join(t.get_list()))
+        for transaction in self.transactions:
+            print(transaction.tid, " ".join(transaction.get_list()))
         print()
 
     def print_as_boolean(self):
         '''Print all transactions as boolean table'''
 
         print("#", *self.fields)
-        for t in self.transactions:
-            print(t.tid, *t.get_boolean(self.fields))
+        for transaction in self.transactions:
+            print(transaction.tid, *transaction.get_boolean(self.fields))
         print()
 
     def calc_support(self, itemsets, support):
@@ -107,10 +107,11 @@ class AbstractAlgorithm:
         for item in self.rules[:top]:
             print(item, f"supp = {item.support:.2f} conf = {item.confidence:.2f}")
 
-    def print_description(self, top=0, names={}):
+    def print_description(self, top=0, names=None):
         '''Print association rules with description'''        
         for item in self.rules[:top]:
-            print(item.description(names), f"supp = {item.support:.2f} conf = {item.confidence:.2f}")    
+            print(item.description(names), 
+                  f"supp = {item.support:.2f} conf = {item.confidence:.2f}")    
 
     def print_itemsets(self):
         '''Print frequent itemsets'''                

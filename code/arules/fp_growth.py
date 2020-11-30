@@ -10,6 +10,7 @@ class Vertex:
     item -- an item of vertex
     support -- support of itemset of path [vertex -> root]
     '''
+
     def __init__(self, parent, item, support):
         '''Init a vertex of FP-Tree
 
@@ -17,6 +18,7 @@ class Vertex:
         item -- data of vertex
         support -- support of item
         '''
+
         self.parent = parent
         self.item = item
         self.support = support
@@ -25,6 +27,7 @@ class Vertex:
 
     def _parent_str(self):
         '''Get string presentation of parent vertex'''
+        
         if self.parent:
             return f"p:{id(self.parent)}"
         else:
@@ -32,6 +35,7 @@ class Vertex:
 
     def _name(self):
         '''Get string presentation of vertex name'''
+
         if self.item:
             return f"{list(self.item).pop()}"
         else:
@@ -39,23 +43,26 @@ class Vertex:
 
     def _mark(self):
         '''Get string presentation of vertex mark'''
+
         if self.mark:
             return "+"
-        else:
-            return "-"
+        return "-"
 
     def __str__(self):
         '''Get string presentation of vertex'''
+
         return f"id:{id(self)} {self._name()}{self._mark()}:{self.support} {self._parent_str()}"
 
     def add_child(self, item):
         '''Add new child to vertex'''
+
         child = Vertex(self, item, 0)
         self.childs.append(child)
         return child
 
     def get_child(self, item):
         '''Get child vertex by item value'''
+
         for child in self.childs:
             if child.item == item:
                 return child
@@ -63,11 +70,12 @@ class Vertex:
 
     def grow(self, itemset, levels):
         '''Grow FP-tree by new itemset'''
+
         self.support += 1
-        
+
         if not itemset:
             return        
-        
+
         word = itemset.pop()
         child = self.get_child(word)
         if child is None:
@@ -81,18 +89,21 @@ class Vertex:
 
     def clear_mark(self):
         '''Clear all marks of vertex and sub-tree'''
+
         self.mark = False
         for child in self.childs:
             child.clear_mark()
 
     def set_mark(self):
         '''Set mark of vertex and parents'''
+
         self.mark = True
         if self.parent is not None:
             self.parent.set_mark()
 
     def update_support(self, increase):
         '''Update support of vertex and sub-tree'''
+
         if self.mark:
             self.support = increase
             self.mark = False
@@ -103,7 +114,7 @@ class Vertex:
             self.parent.update_support(increase)
 
 
-class FP_Tree:
+class FPTree:
     '''FP-Tree
 
     database -- transaction database
@@ -117,16 +128,16 @@ class FP_Tree:
         self.root = Vertex(None, None, 0)
         self.support = {}
         self.levels = []
-    
+
     def build(self, min_support):
-        # calc one-element itemset support 
-        itemsets = [frozenset(field) for field in self.database.fields] 
+        # calc one-element itemset support
+        itemsets = [frozenset(field) for field in self.database.fields]
         support = {}
         self.database.calc_support(itemsets, support)
-        
+
         # generate levels of fp-tree in order of support decrease
         # for items with support >= MinSupp        
-        self.levels = [(item, []) for item in support.keys() if support[item] >= min_support]
+        self.levels = [(item, []) for item in support if support[item] >= min_support]
         self.levels.sort(key=lambda item: support[item[0]])
 
         for transaction in self.database.transactions:
@@ -134,7 +145,7 @@ class FP_Tree:
             # in order of their levels
             words = [level for level, _ in self.levels if level <= transaction.itemset]
             self.root.grow(words, self.levels)
-            
+
     def print_vertex(self, vertex):
         '''Print vertex and child vertexes'''
 
@@ -160,12 +171,16 @@ class FP_Tree:
         print()
 
     def get_level(self, word):
+        '''Find level by its frozenset representation'''
+
         for item in self.levels:
             if word == item[0]:
                 return item
         return None
 
-    def get_level_by_name(self, name):        
+    def get_level_by_name(self, name):
+        '''Find level by its field name'''
+
         return self.get_level(frozenset({name}))
 
     def clear_marks(self):
@@ -185,7 +200,7 @@ class FP_Tree:
     def delete_unmarked(self, vertex):
         '''Delete all unmarked vertexes from tree'''
 
-        for word, vertexes in self.levels:
+        for _, vertexes in self.levels:
             for vertex in vertexes:
                 if not vertex.mark:
                     vertexes.remove(vertex)
@@ -241,7 +256,7 @@ class FP_Tree:
         '''
 
         for level in reversed(self.levels):
-            word, vertexes = level
+            word, _ = level
             level_support = self.calc_level_support(level)
             if level_support >= min_support * len(self.database.transactions):
                 new_itemset = set(itemset)
@@ -309,7 +324,7 @@ class FPGrowthAlgorithm(AbstractAlgorithm):
         self.itemsets = []
         self.support = {}
         self.rules = []
-        self.ftp = None
+        self.fpt = None
 
     def get_support(self, itemset):
         '''Get (or calc if not calculated) support of itemset'''
@@ -341,7 +356,8 @@ class FPGrowthAlgorithm(AbstractAlgorithm):
     def run(self, debug=False):
         '''Run FP-Growth algorithm'''
 
-        if debug: print('Runnung FP-Growth...')        
+        if debug: 
+            print('Runnung FP-Growth...')        
 
         # init fields
         self.itemsets = []
@@ -349,7 +365,7 @@ class FPGrowthAlgorithm(AbstractAlgorithm):
         self.rules = []
 
         # create and build fp-tree
-        self.fpt = FP_Tree(self.database)
+        self.fpt = FPTree(self.database)
         self.fpt.build(self.min_support)
         
         self.itemsets = self.fpt.get_itemsets(self.min_support)
@@ -357,7 +373,8 @@ class FPGrowthAlgorithm(AbstractAlgorithm):
 
         self.rules = self.get_rules()
 
-        if debug: print('FP-Growth done!')
+        if debug: 
+            print('FP-Growth done!')
 
     def print_itemsets(self):
         '''Print frequent itemsets'''
@@ -396,7 +413,7 @@ if __name__ == "__main__":
     db.print_as_boolean()
 
     # create and build fp-tree
-    fpt = FP_Tree(db)
+    fpt = FPTree(db)
     fpt.build(min_support=0.3)
 
     print("FP-Tree:")

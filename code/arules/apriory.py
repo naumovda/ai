@@ -78,22 +78,29 @@ class AprioriAlgorithm(AbstractAlgorithm):
                         rule_support = self.support[itemset]
                         rule_confidence = rule_support / self.support[antecedent]
                         if rule_confidence > self.min_confidence:
-                            self.rules.append(Rule(antecedent, consequent, rule_support, rule_confidence))
+                            self.rules.append(Rule(antecedent, 
+                                                   consequent, 
+                                                   rule_support, 
+                                                   rule_confidence))
         self.rules.sort(key=lambda rule: rule.confidence)
      
     def run(self, debug=False):
         '''Run Apriory algorithm'''
 
-        if debug: print('Runnung Apriori:')        
+        if debug: 
+            print('Runnung Apriori:')        
 
         if self.step_0():
-            if debug: print('.')
+            if debug: 
+                print('.')
             
             while self.step_k():
-                if debug: print('.')
+                if debug: 
+                    print('.')
             self.generate_rules()
             
-            if debug: print('.done!')  
+            if debug: 
+                print('.done!')  
 
     def print_itemsets(self):
         '''Print frequent itemsets'''
@@ -114,19 +121,19 @@ class AprioriAlgorithm(AbstractAlgorithm):
     def print_support(self):
         '''Print support for frequent itemsets'''
 
-        for key in self.support.keys():
+        for key in self.support:
             print(list(key), f"{self.support[key]:.2f}")
         print()
    
 if __name__ == "__main__":
     # Init database and field list
-    db = Database(['A','B','C','D','E','F'])
+    db = Database(['A', 'B', 'C', 'D', 'E', 'F'])
     
     # Create transactions
-    t1 = Transaction(0, frozenset(['A','B','C']))
-    t2 = Transaction(1, frozenset(['A','C']))
-    t3 = Transaction(2, frozenset(['A','D']))
-    t4 = Transaction(3, frozenset(['B','E','F']))
+    t1 = Transaction(0, frozenset(['A', 'B', 'C']))
+    t2 = Transaction(1, frozenset(['A', 'C']))
+    t3 = Transaction(2, frozenset(['A', 'D']))
+    t4 = Transaction(3, frozenset(['B', 'E', 'F']))
 
     # Add transactions to database
     db.add_transaction(t1)
