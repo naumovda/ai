@@ -8,7 +8,7 @@ goal = state(None, [1,2,3,8,0,4,7,6,5])
 print('fair =', fair_evaluator(initial, goal))
 print('good =', good_evaluator(initial, goal))    
 print('weak =', weak_evaluator(initial, goal))
-print('bad  =', bad_evaluator(initial, goal))
+# print('bad  =', bad_evaluator(initial, goal))
 
 f = lambda: a_search(initial, goal, fair_evaluator)
 # f = lambda: a_search(initial, goal, good_evaluator)
