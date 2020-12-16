@@ -237,11 +237,7 @@ def evaluator(state, goal):
    return sum([1 for v1, v2 in state.all_dices if v1==v2])
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    s = state([])
-=======
     s = state(None, [(0, 0, 1, 0), (0, 4, 0, 3)], 0)
->>>>>>> 56f024cd1fd86b83fa518e9518ad255a221740cc
     
     s.print()
     print('---')
